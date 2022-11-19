@@ -16,10 +16,10 @@ class Player:
 
     @property
     def position(self):
-        return self.position
+        return self._position
 
     @position.setter
     def position(self, pos):
         if pos not in ["GK", "DEF", "MID", "ATT"]:
             raise ValueError("Sorry, that's not a valid position")
-        self.position = pos
+        self._position = pos
