@@ -4,15 +4,17 @@ class Player:
             name: str,
             position: str,
             price: float,
-            value: float
+            value: float,
+            country: str
     ):
         self.name = name
         self.position = position
         self.price = price
         self.value = value
+        self.country = country
 
     def __str__(self):
-        return f"({self.name}, {self.position}, {self.price}, {self.value})"
+        return f"({self.name}, {self.position}, {self.price}, {self.value}, {self.country})"
 
     @property
     def position(self):
