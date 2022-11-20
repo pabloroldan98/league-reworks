@@ -25,3 +25,14 @@ class Player:
         if pos not in ["GK", "DEF", "MID", "ATT"]:
             raise ValueError("Sorry, that's not a valid position")
         self._position = pos
+
+    def get_group(self):
+        if self.position == "GK":
+            group = 0
+        elif self.position == "DEF":
+            group = 1
+        elif self.position == "MID":
+            group = 2
+        else:
+            group = 3
+        return group

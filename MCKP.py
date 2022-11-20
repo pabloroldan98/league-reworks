@@ -30,12 +30,38 @@ def multipleChoiceKnapsack(W, weights, values, groups):
             else:
                 K[i][w] = K[i - 1][w]
 
-    return K[n][W]
+    # stores the result of Knapsack
+    res = K[n][W]
+    sol = []
+
+    w = W
+    for i in range(n, 0, -1):
+        if res <= 0:
+            break
+        # either the result comes from the
+        # top (K[i-1][w]) or from (val[i-1]
+        # + K[i-1] [w-wt[i-1]]) as in Knapsack
+        # table. If it comes from the latter
+        # one/ it means the item is included.
+        if res == K[i - 1][w]:
+            continue
+        else:
+
+            # This item is included.
+            sol.append(i - 1)
+            print(i - 1)
+
+            # Since this weight is included
+            # its value is deducted
+            res = res - values[i - 1]
+            w = w - weights[i - 1]
+
+    return K[n][W], sol
 
 
 # Example
-values = [60, 100, 120]
-weights = [10, 20, 30]
-groups = [0, 1, 2]
-W = 50
-print(multipleChoiceKnapsack(W, weights, values, groups))  # 220
+# values = [60, 100, 120]
+# weights = [10, 20, 30]
+# groups = [0, 0, 1]
+# W = 50
+# print(multipleChoiceKnapsack(W, weights, values, groups))  # 220
