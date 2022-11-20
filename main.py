@@ -1,5 +1,5 @@
 from player import Player
-from knapsack import printknapSack
+from group_knapsack import best_squads
 
 playerDB = [
     Player("Mbappe", "ATT", 75, 7.5, "FRA"),
@@ -65,8 +65,31 @@ playerDB = [
 
 ]
 
+possible_formations = [
+    [3, 4, 3],
+    [3, 5, 2],
+    [4, 3, 3],
+    [4, 4, 2],
+    [4, 5, 1],
+    [5, 3, 2],
+    [5, 4, 1],
+]
 
-newlist = sorted(playerDB, key=lambda x: x.value/x.price, reverse=True)
 
-for player in newlist:
-    print(player)
+best_squads(playerDB, possible_formations, 300)
+
+
+# newlist = sorted(playerDB, key=lambda x: x.value/x.price, reverse=True)
+#
+# for player in newlist:
+#     print(player)
+#
+#
+# attrs = [o.name for o in playerDB]
+#
+# for playerName in attrs:
+#     print(playerName)
+
+
+
+
