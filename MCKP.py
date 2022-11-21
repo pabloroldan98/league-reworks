@@ -1,4 +1,6 @@
 # Source: https://gist.github.com/USM-F/1287f512de4ffb2fb852e98be1ac271d
+from itertools import chain
+
 
 # groups is list of integers in ascending order without gaps
 
@@ -29,6 +31,8 @@ def multipleChoiceKnapsack(W, weights, values, groups):
                 K[i][w] = max(sub_max + values[i - 1], K[i - 1][w])
             else:
                 K[i][w] = K[i - 1][w]
+        if w % 10 == 0:
+            print(str(w/W*100) + " %")
 
     # stores the result of Knapsack
     res = K[n][W]
@@ -51,6 +55,13 @@ def multipleChoiceKnapsack(W, weights, values, groups):
             sol.append(i - 1)
             print(i - 1)
 
+            #sub_max = 0
+            #prev_group = groups[i - 1] - 1
+            #sub_K = getRow(K, w - weights[i - 1])
+            #for j in range(n + 1):
+            #    if groups[j - 1] == prev_group and sub_K[j] > sub_max:
+            #        sub_max = sub_K[j]
+
             # Since this weight is included
             # its value is deducted
             res = res - values[i - 1]
@@ -59,9 +70,96 @@ def multipleChoiceKnapsack(W, weights, values, groups):
     return K[n][W], sol
 
 
+# Source:
+
+def knapsack_multichoice(total_weight, values, weights, groups):
+    # python starts index at 0 which is why we use len(values)+1
+    # create a nested list with size of (number of items+1)*(weights+1)
+    array = [[0 for _ in range(total_weight + 1)] for _ in
+             range(len(values) + 1)]
+    path = [[[] for _ in range(total_weight + 1)] for _ in
+            range(len(values) + 1)]
+
+    # now we begin our traversal on all elements in matrix
+    # note we would be using i-1 to imply item i
+    for i in range(1, len(values) + 1):
+        for j in range(1, total_weight + 1):
+
+            # this is the part to check if adding item i would exceed the current capacity j
+            # if it does,we go to the previous status
+            # if not,we shall find out whether adding item i would be the new optimal
+            if weights[i - 1] <= j:
+
+                # we only select one item from each group
+                # we will find the item that maximizes the value in each group
+                prev_group = groups[i - 1] - 1
+
+                # initialize
+                subset_max = 0
+                target = 0
+
+                # get column of the matrix
+                subset = [row[j - weights[i - 1]] for row in array]
+
+                # find the item that maximizes the value in the previous group
+                for k in range(len(values) + 1):
+                    if groups[k - 1] == prev_group and subset[k] > subset_max:
+                        subset_max = subset[k]
+                        target = k
+
+                if not path[target][j - weights[i - 1]]:
+                    comp = True
+                else:
+                    comp = weights[i - 1] < weights[path[target][j - weights[i - 1]][-1]]
+                # dynamic programming
+                if subset_max + values[i - 1] > array[i - 1][j]:
+                    array[i][j] = subset_max + values[i - 1]
+                    path[i][j] = path[target][j - weights[i - 1]] + [i - 1]
+                elif subset_max + values[i - 1] == array[i - 1][j] and comp:
+                    array[i][j] = subset_max + values[i - 1]
+                    path[i][j] = path[target][j - weights[i - 1]] + [i - 1]
+                else:
+                    array[i][j] = array[i - 1][j]
+                    path[i][j] = path[i - 1][j]
+            else:
+                array[i][j] = array[i - 1][j]
+                path[i][j] = path[i - 1][j]
+
+        if i % 100 == 0:
+            print(str(i/len(values)*100) + " %")
+
+    flat_array = list(chain.from_iterable(array))
+    flat_path = list(chain.from_iterable(path))
+
+    n_groups = len(set(groups))
+
+    solution, index_path = get_contrained_solution(flat_array, flat_path, n_groups)
+
+    return solution, index_path
+
+
+def get_contrained_solution(scores, paths, count):
+
+    score = scores[-1]
+    path = paths[-1]
+
+    scores_paths = list(zip(scores, paths))
+    sorted_by_score = sorted(scores_paths, key=lambda tup: tup[0], reverse=True)
+
+    for top_score_path in sorted_by_score:
+        if len(top_score_path[1]) == count:
+            score = top_score_path[0]
+            path = top_score_path[1]
+            break
+
+    return score, path
+
+
 # Example
-# values = [60, 100, 120]
-# weights = [10, 20, 30]
-# groups = [0, 0, 1]
-# W = 50
-# print(multipleChoiceKnapsack(W, weights, values, groups))  # 220
+values = [60, 100, 120, 20, 20, 30]
+weights = [10, 20, 60, 20, 30, 20]
+groups = [0, 0, 1, 1, 2, 2]
+W = 80
+#print(multipleChoiceKnapsack(W, weights, values, groups))  # 220
+
+print(knapsack_multichoice(W, values, weights, groups))  # 220

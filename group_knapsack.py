@@ -1,6 +1,6 @@
 import itertools
 
-from MCKP import multipleChoiceKnapsack
+from MCKP import multipleChoiceKnapsack, knapsack_multichoice
 
 
 def best_teams(players_list, formations, budget):
@@ -9,13 +9,10 @@ def best_teams(players_list, formations, budget):
     for formation in formations:
         player_values, player_prices, player_positions, player_comb_indexes = players_preproc(players_list, formation)
 
-        print(player_values)
-        print(player_prices)
-        print(player_positions)
-        print(player_comb_indexes)
-        print(len(player_values))
+        # score, comb_result_indexes = multipleChoiceKnapsack(budget, player_prices, player_values, player_positions)
+        score, comb_result_indexes = knapsack_multichoice(budget, player_values, player_prices, player_positions)
 
-        score, comb_result_indexes = multipleChoiceKnapsack(budget, player_prices, player_values, player_positions)
+        print(comb_result_indexes)
 
         result_indexes = []
         for comb_index in comb_result_indexes:
