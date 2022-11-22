@@ -1,3 +1,4 @@
+
 class Player:
     def __init__(
             self,
@@ -5,13 +6,19 @@ class Player:
             position: str,
             price: float,
             value: float,
-            country: str
+            country: str,
+            status: str,
+            price_trend: float,
+            fitness: list
     ):
         self.name = name
         self.position = position
         self.price = price
         self.value = value
         self.country = country
+        self.status = status
+        self.price_trend = price_trend
+        self.fitness = fitness
 
     def __str__(self):
         return f"({self.name}, {self.position}, {self.price}, {self.value}, {self.country})"
@@ -28,11 +35,23 @@ class Player:
 
     def get_group(self):
         if self.position == "GK":
-            group = 0
-        elif self.position == "DEF":
             group = 1
-        elif self.position == "MID":
+        elif self.position == "DEF":
             group = 2
-        else:
+        elif self.position == "MID":
             group = 3
+        else:
+            group = 4
         return group
+
+
+def get_position(group):
+    if group == 1:
+        position = "GK"
+    elif group == 2:
+        position = "DEF"
+    elif group == 3:
+        position = "MID"
+    else:
+        position = "ATT"
+    return position
