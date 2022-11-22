@@ -94,11 +94,11 @@ def get_players_worldcup_data(data):
 
     return worldcup_players_db
 
-# user_data_url = 'https://biwenger.as.com/api/v2/user/4537694?fields=*,account(id),players(id,owner),lineups(round,points,count,position),league(id,name,competition,mode,scoreID),market,seasons,offers,lastPositions'
-all_data_url = 'https://cf.biwenger.com/api/v2/competitions/world-cup/data?lang=en&score=1&callback=jsonp_xxx' # <--- check @αԋɱҽԃ αмєяιcαη answer, it's possible to do it without callback= parameter
-
-response = requests.get(all_data_url)
-data = json.loads( re.findall(r'jsonp_xxx\((.*)\)', response.text)[0] )
+# user_data_url = 'https://biwenger.as.com/api/v2/user/16728?fields=*,account(id),players(id,owner),lineups(round,points,count,position),league(id,name,competition,mode,scoreID),market,seasons,offers,lastPositions'
+# all_data_url = 'https://cf.biwenger.com/api/v2/competitions/world-cup/data?lang=en&score=1&callback=jsonp_xxx' # <--- check @αԋɱҽԃ αмєяιcαη answer, it's possible to do it without callback= parameter
+#
+# response = requests.get(all_data_url)
+# data = json.loads( re.findall(r'jsonp_xxx\((.*)\)', response.text)[0] )
 
 # user_data = requests.get(user_data_url).json()
 

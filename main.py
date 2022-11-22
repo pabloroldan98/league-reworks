@@ -1,3 +1,7 @@
+from urllib.request import urlopen
+
+import requests
+
 from biwenger import get_worldcup_data
 from group_knapsack import best_full_teams
 from player import Player
@@ -79,10 +83,17 @@ possible_formations = [
 ]
 
 
-all_teams, all_players = get_worldcup_data()
+# all_teams, all_players = get_worldcup_data()
 
-best_full_teams(playersDB, possible_formations, 300)
+# best_full_teams(playersDB, possible_formations, 300)
 
+import urllib, json
+
+url = "https://www.eloratings.net/"
+
+r = requests.get(url)
+
+print(r.json())
 
 # best_teams(playerDB, possible_formations, 300)
 
