@@ -7,6 +7,8 @@ from MCKP import multipleChoiceKnapsack, knapsack_multichoice, \
 def best_full_teams(players_list, formations, budget):
     # players_by_group = sorted(players_list, key=lambda x: x.get_group())
 
+    formation_score_players = []
+
     for formation in formations:
         player_values, player_prices, player_comb_indexes = players_preproc(players_list, formation)
 
@@ -17,15 +19,24 @@ def best_full_teams(players_list, formations, budget):
             for winning_i in player_comb_indexes[comb_index[0]][comb_index[1]]:
                 result_indexes.append(winning_i)
 
-        result = []
+        result_players = []
         for res_index in result_indexes:
-            result.append(players_list[res_index])
+            result_players.append(players_list[res_index])
+
+        formation_score_players.append((formation, score, result_players))
 
         print("With formation " + str(formation) + ": " + str(score))
-        for best_player in result:
+        for best_player in result_players:
             print(best_player)
         print()
         print()
+
+    formation_score_players_by_score = sorted(formation_score_players, key=lambda tup: tup[1],
+                                      reverse=True)
+    for final_formation_score in formation_score_players_by_score:
+        print((final_formation_score[0], final_formation_score[1]))
+
+    return formation_score_players
 
 
 def players_preproc(players_list, formation):

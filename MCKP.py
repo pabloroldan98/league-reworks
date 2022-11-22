@@ -159,28 +159,28 @@ def get_contrained_solution(scores, paths, count):
 # Original source: https://nickgavalas.com/solving-the-multiple-choice-knapsack-problem/
 # Translated by pablo.roldan
 
-def knapsack_multichoice_onepick(weight, value, max_weight):
-    if len(weight) == 0:
+def knapsack_multichoice_onepick(weights, values, max_weight):
+    if len(weights) == 0:
         return 0
 
     last_array = [-1 for _ in range(max_weight + 1)]
     last_path = [[] for _ in range(max_weight + 1)]
-    for i in range(len(weight[0])):
-        if weight[0][i] < max_weight:
-            if last_array[weight[0][i]] < value[0][i]:
-                last_path[weight[0][i]].append((0, i))
-                last_array[weight[0][i]] = value[0][i]
+    for i in range(len(weights[0])):
+        if weights[0][i] < max_weight:
+            if last_array[weights[0][i]] < values[0][i]:
+                last_array[weights[0][i]] = values[0][i]
+                last_path[weights[0][i]].append((0, i))
             # last_array[weight[0][i]] = max(last_array[weight[0][i]], value[0][i])
 
-    for i in range(1, len(weight)):
+    for i in range(1, len(weights)):
         current_array = [-1 for _ in range(max_weight + 1)]
         current_path = [[] for _ in range(max_weight + 1)]
-        for j in range(len(weight[i])):
-            for k in range(weight[i][j], max_weight + 1):
-                if last_array[k - weight[i][j]] > 0:
-                    if current_array[k] < last_array[k - weight[i][j]] + value[i][j]:
-                        current_array[k] = last_array[k - weight[i][j]] + value[i][j]
-                        current_path[k] = copy.deepcopy(last_path[k - weight[i][j]])
+        for j in range(len(weights[i])):
+            for k in range(weights[i][j], max_weight + 1):
+                if last_array[k - weights[i][j]] > 0:
+                    if current_array[k] < last_array[k - weights[i][j]] + values[i][j]:
+                        current_array[k] = last_array[k - weights[i][j]] + values[i][j]
+                        current_path[k] = copy.deepcopy(last_path[k - weights[i][j]])
                         current_path[k].append((i, j))
                     # current_array[k] = max(current_array[k], last_array[k - weight[i][j]] + value[i][j])
         last_array = current_array
@@ -214,4 +214,4 @@ values = [[6, 10], [12, 2], [2, 3]]
 weights = [[1, 2], [6, 2], [3, 2]]
 W = 7
 
-print(knapsack_multichoice_onepick(weights, values, W))  # 220
+print(knapsack_multichoice_onepick(weights, values, W))  # (15, [(0, 1), (1, 1), (2, 1)])
