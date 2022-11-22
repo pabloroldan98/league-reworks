@@ -10,13 +10,13 @@ def best_full_teams(players_list, formations, budget):
     formation_score_players = []
 
     for formation in formations:
-        player_values, player_prices, player_comb_indexes = players_preproc(players_list, formation)
+        players_values, players_prices, players_comb_indexes = players_preproc(players_list, formation)
 
-        score, comb_result_indexes = knapsack_multichoice_onepick(player_prices, player_values, budget)
+        score, comb_result_indexes = knapsack_multichoice_onepick(players_prices, players_values, budget)
 
         result_indexes = []
         for comb_index in comb_result_indexes:
-            for winning_i in player_comb_indexes[comb_index[0]][comb_index[1]]:
+            for winning_i in players_comb_indexes[comb_index[0]][comb_index[1]]:
                 result_indexes.append(winning_i)
 
         result_players = []
