@@ -157,7 +157,7 @@ def get_contrained_solution(scores, paths, count):
 
 
 # Original source: https://nickgavalas.com/solving-the-multiple-choice-knapsack-problem/
-# Translated by pablo.roldan
+# Translated by pabloroldan98
 
 def knapsack_multichoice_onepick(weights, values, max_weight):
     if len(weights) == 0:
