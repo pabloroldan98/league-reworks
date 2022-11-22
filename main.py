@@ -1,6 +1,6 @@
-from group_knapsack import best_teams
+from group_knapsack import best_full_teams
 from player import Player
-from OLD_group_knapsack import best_squads
+from OLD_group_knapsack import best_squads, best_teams
 
 playerDB = [
     Player("Mendy", "GK", 20, 6.8, "SEN"),
@@ -78,8 +78,10 @@ possible_formations = [
 ]
 
 
-best_teams(playerDB, possible_formations, 300)
+best_full_teams(playerDB, possible_formations, 300)
 
+
+# best_teams(playerDB, possible_formations, 300)
 
 # best_squads(playerDB, possible_formations, 300)
 

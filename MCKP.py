@@ -1,4 +1,5 @@
 # Source: https://gist.github.com/USM-F/1287f512de4ffb2fb852e98be1ac271d
+import copy
 from itertools import chain
 
 
@@ -70,7 +71,7 @@ def multipleChoiceKnapsack(W, weights, values, groups):
     return K[n][W], sol
 
 
-# Source:
+# Source: https://github.com/je-suis-tm/recursion-and-dynamic-programming/blob/master/knapsack%20multiple%20choice.py
 
 def knapsack_multichoice(total_weight, values, weights, groups):
     # python starts index at 0 which is why we use len(values)+1
@@ -155,6 +156,49 @@ def get_contrained_solution(scores, paths, count):
     return score, path
 
 
+# Original source: https://nickgavalas.com/solving-the-multiple-choice-knapsack-problem/
+# Translated by pablo.roldan
+
+def knapsack_multichoice_onepick(weight, value, max_weight):
+    if len(weight) == 0:
+        return 0
+
+    last_array = [-1 for _ in range(max_weight + 1)]
+    last_path = [[] for _ in range(max_weight + 1)]
+    for i in range(len(weight[0])):
+        if weight[0][i] < max_weight:
+            if last_array[weight[0][i]] < value[0][i]:
+                last_path[weight[0][i]].append((0, i))
+                last_array[weight[0][i]] = value[0][i]
+            # last_array[weight[0][i]] = max(last_array[weight[0][i]], value[0][i])
+
+    for i in range(1, len(weight)):
+        current_array = [-1 for _ in range(max_weight + 1)]
+        current_path = [[] for _ in range(max_weight + 1)]
+        for j in range(len(weight[i])):
+            for k in range(weight[i][j], max_weight + 1):
+                if last_array[k - weight[i][j]] > 0:
+                    if current_array[k] < last_array[k - weight[i][j]] + value[i][j]:
+                        current_array[k] = last_array[k - weight[i][j]] + value[i][j]
+                        current_path[k] = copy.deepcopy(last_path[k - weight[i][j]])
+                        current_path[k].append((i, j))
+                    # current_array[k] = max(current_array[k], last_array[k - weight[i][j]] + value[i][j])
+        last_array = current_array
+        last_path = current_path
+
+    solution, index_path = get_onepick_solution(last_array, last_path)
+
+    return solution, index_path
+
+
+def get_onepick_solution(scores, paths):
+
+    scores_paths = list(zip(scores, paths))
+    scores_paths_by_score = sorted(scores_paths, key=lambda tup: tup[0], reverse=True)
+
+    return scores_paths_by_score[0][0], scores_paths_by_score[0][1]
+
+
 # Example
 values = [60, 100, 120, 20, 20, 30]
 weights = [10, 20, 60, 20, 30, 20]
@@ -162,4 +206,12 @@ groups = [0, 0, 1, 1, 2, 2]
 W = 80
 #print(multipleChoiceKnapsack(W, weights, values, groups))  # 220
 
-print(knapsack_multichoice(W, values, weights, groups))  # 220
+#print(knapsack_multichoice(W, values, weights, groups))  # 220
+
+
+# Example
+values = [[6, 10], [12, 2], [2, 3]]
+weights = [[1, 2], [6, 2], [3, 2]]
+W = 7
+
+print(knapsack_multichoice_onepick(weights, values, W))  # 220
