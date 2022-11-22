@@ -2,7 +2,7 @@ from group_knapsack import best_full_teams
 from player import Player
 from OLD_group_knapsack import best_squads, best_teams
 
-playerDB = [
+playersDB = [
     Player("Mendy", "GK", 20, 6.8, "SEN"),
     Player("Matt Turner", "GK", 11, 7.4, "USA"),
     Player("Szczesny", "GK", 19, 7.4, "POL"),
@@ -78,7 +78,7 @@ possible_formations = [
 ]
 
 
-best_full_teams(playerDB, possible_formations, 300)
+best_full_teams(playersDB, possible_formations, 300)
 
 
 # best_teams(playerDB, possible_formations, 300)
