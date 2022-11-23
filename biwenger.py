@@ -7,6 +7,7 @@ from pprint import pprint
 from bs4 import BeautifulSoup
 
 from player import Player, get_position
+from eloratings import get_teams_elos
 from team import Team
 
 
@@ -27,12 +28,19 @@ def get_teams_worldcup_data(data):
 
     worldcup_teams_db = []
     worldcup_teams = data['data']['teams']
+    teams_elos_dict, short_teams_elos_dict = get_teams_elos()
     for worldcup_team_id in worldcup_teams:
         worldcup_team = worldcup_teams[str(worldcup_team_id)]
 
         team_name = worldcup_team["name"]
         team_next_opponent = get_next_opponent(worldcup_team_id, worldcup_teams)
-        team_elo = 0
+
+        if team_name in teams_elos_dict:
+            team_elo = teams_elos_dict[team_name]
+        elif team_name in short_teams_elos_dict:
+            team_elo = short_teams_elos_dict[team_name]
+        else:
+            team_elo = 0
 
         new_team = Team(
             team_name,
@@ -66,7 +74,7 @@ def get_players_worldcup_data(data):
     for worldcup_player_id in worldcup_players:
         worldcup_player = worldcup_players[str(worldcup_player_id)]
 
-        pprint(worldcup_player)
+        # pprint(worldcup_player)
         player_name = worldcup_player["name"]
         player_group = worldcup_player["position"]
         player_price = worldcup_player["fantasyPrice"]/1000000

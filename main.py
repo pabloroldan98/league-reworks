@@ -1,6 +1,5 @@
-from urllib.request import urlopen
 
-import requests
+# Look at: https://stackoverflow.com/questions/74503207/knapsack-with-specific-amount-of-items-from-different-groups
 
 from biwenger import get_worldcup_data
 from group_knapsack import best_full_teams
@@ -49,22 +48,22 @@ playersDB = [
     Player("Gueye", "MID", 19, 7, "SEN", "ok", 0, []),
 
     Player("Mbappe", "ATT", 75, 7.5, "FRA", "ok", 0, []),
-    #    Player("Lewandowsik", "ATT", 51, 0, "POL", "ok", 0, []),
+    Player("Lewandowsik", "ATT", 51, 0, "POL", "ok", 0, []),
     Player("Messi", "ATT", 51, 8.2, "ARG", "ok", 0, []),
     Player("Kane", "ATT", 50, 7.7, "ING", "ok", 0, []),
     Player("Neymar", "ATT", 50, 7.5, "BRA", "ok", 0, []),
-    #    Player("Depay", "ATT", 46, 0, "HOL", "ok", 0, []),
-    #    Player("Benzema", "ATT", 41, 0, "FRA", "ok", 0, []),
-    #    Player("Lukaku", "ATT", 40, 0, "BEL", "ok", 0, []),
-    #    Player("Lautaro", "ATT", 40, 0, "ARG", "ok", 0, []),
-    #    Player("Vlahovic", "ATT", 36, 0, "SER", "ok", 0, []),
-    #    Player("Sterling", "ATT", 34, 0, "ING", "ok", 0, []),
-    #    Player("Dani Olmo", "ATT", 34, 0, "ESP", "ok", 0, []),
-    #    Player("Jonathan David", "ATT", 33, 0, "CAN", "ok", 0, []),
+    Player("Depay", "ATT", 46, 0, "HOL", "ok", 0, []),
+    Player("Benzema", "ATT", 41, 0, "FRA", "ok", 0, []),
+    Player("Lukaku", "ATT", 40, 0, "BEL", "ok", 0, []),
+    Player("Lautaro", "ATT", 40, 0, "ARG", "ok", 0, []),
+    Player("Vlahovic", "ATT", 36, 0, "SER", "ok", 0, []),
+    Player("Sterling", "ATT", 34, 0, "ING", "ok", 0, []),
+    Player("Dani Olmo", "ATT", 34, 0, "ESP", "ok", 0, []),
+    Player("Jonathan David", "ATT", 33, 0, "CAN", "ok", 0, []),
     Player("Gakpo", "ATT", 33, 7.4, "HOL", "ok", 0, []),
     Player("Griezmann", "ATT", 31, 7.7, "FRA", "ok", 0, []),
-    #    Player("Morata", "ATT", 31, 0, "ESP", "ok", 0, []),
-    #    Player("CR7", "ATT", 31, 0, "POR", "ok", 0, []),
+    Player("Morata", "ATT", 31, 0, "ESP", "ok", 0, []),
+    Player("CR7", "ATT", 31, 0, "POR", "ok", 0, []),
     Player("Raphinha", "ATT", 31, 7.4, "BRA", "ok", 0, []),
     Player("Di María", "ATT", 22, 7.4, "ARG", "ok", 0, []),
     Player("Luis Suárez", "ATT", 22, 6.8, "URU", "ok", 0, []),
@@ -83,17 +82,16 @@ possible_formations = [
 ]
 
 
-# all_teams, all_players = get_worldcup_data()
+all_teams, all_players = get_worldcup_data()
+
+for team in all_teams:
+    print(team)
+
+for player in all_players:
+    print(player)
 
 # best_full_teams(playersDB, possible_formations, 300)
 
-import urllib, json
-
-url = "https://www.eloratings.net/"
-
-r = requests.get(url)
-
-print(r.json())
 
 # best_teams(playerDB, possible_formations, 300)
 

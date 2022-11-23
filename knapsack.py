@@ -132,15 +132,3 @@ def knapsack3(n, weight, values, weights, count):
             c = c - 1
 
     return K[-1][-1][-1]
-
-
-w = 5
-k = 2
-values = [1, 2, 3, 2, 2]
-weights = [4, 5, 1, 1, 1]
-n = len(values)
-
-no_limit_fmt = 'Max value for weight limit {}, no item limit: {}'
-limit_fmt = 'Max value for weight limit {}, item limit {}: {}'
-
-print(limit_fmt.format(w, k, knapsack3(n, w, values, weights, k)))
