@@ -3,13 +3,14 @@ class Player:
     def __init__(
             self,
             name: str,
-            position: str,
-            price: float,
-            value: float,
-            country: str,
-            status: str,
-            price_trend: float,
-            fitness: list
+            position: str = "GK",
+            price: float = 100000,
+            value: float = 0,
+            country: str = "Spain",
+            status: str = "ok",
+            standard_price: float = 0,
+            price_trend: float = 0,
+            fitness: list = [None, None, None, None, None]
     ):
         self.name = name
         self.position = position
@@ -17,6 +18,7 @@ class Player:
         self.value = value
         self.country = country
         self.status = status
+        self.standard_price = standard_price
         self.price_trend = price_trend
         self.fitness = fitness
 
@@ -43,6 +45,12 @@ class Player:
         else:
             group = 4
         return group
+
+    def has_played_last_match(self):
+        if self.fitness[0] is not None:
+            return True
+        else:
+            return False
 
 
 def get_position(group):

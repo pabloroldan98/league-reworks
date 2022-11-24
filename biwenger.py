@@ -21,7 +21,10 @@ def get_worldcup_data():
     worldcup_teams = get_teams_worldcup_data(data)
     worldcup_players = get_players_worldcup_data(data)
 
-    return worldcup_teams, worldcup_players
+    sorted_worldcup_teams = sorted(worldcup_teams, key=lambda x: x.elo, reverse=True)
+    sorted_worldcup_players = sorted(worldcup_players, key=lambda x: x.price, reverse=True)
+
+    return sorted_worldcup_teams, sorted_worldcup_players
 
 
 def get_teams_worldcup_data(data):
@@ -79,6 +82,7 @@ def get_players_worldcup_data(data):
         player_group = worldcup_player["position"]
         player_price = worldcup_player["fantasyPrice"]/1000000
         player_status = worldcup_player["status"]
+        player_standard_price = worldcup_player["price"]
         player_price_trend = worldcup_player["priceIncrement"]
         player_fitness = worldcup_player["fitness"]
 
@@ -95,6 +99,7 @@ def get_players_worldcup_data(data):
             0,
             player_team,
             player_status,
+            player_standard_price,
             player_price_trend,
             player_fitness
         )
@@ -103,10 +108,10 @@ def get_players_worldcup_data(data):
     return worldcup_players_db
 
 # user_data_url = 'https://biwenger.as.com/api/v2/user/16728?fields=*,account(id),players(id,owner),lineups(round,points,count,position),league(id,name,competition,mode,scoreID),market,seasons,offers,lastPositions'
-# all_data_url = 'https://cf.biwenger.com/api/v2/competitions/world-cup/data?lang=en&score=1&callback=jsonp_xxx' # <--- check @αԋɱҽԃ αмєяιcαη answer, it's possible to do it without callback= parameter
+all_data_url = 'https://cf.biwenger.com/api/v2/competitions/world-cup/data?lang=en&score=1&callback=jsonp_xxx' # <--- check @αԋɱҽԃ αмєяιcαη answer, it's possible to do it without callback= parameter
 #
-# response = requests.get(all_data_url)
-# data = json.loads( re.findall(r'jsonp_xxx\((.*)\)', response.text)[0] )
+response = requests.get(all_data_url)
+data = json.loads( re.findall(r'jsonp_xxx\((.*)\)', response.text)[0] )
 
 # user_data = requests.get(user_data_url).json()
 
@@ -114,6 +119,25 @@ def get_players_worldcup_data(data):
 # pprint(data)       # <-- uncomment this to see data about all players
 #
 # pprint(data["data"]["players"])
+#
+# print(type(data['data']['players']["29346"]["fitness"][0]))
+min=10000
+max=0
+for player_id in data['data']['players']:
+    player = data['data']['players'][str(player_id)]
+    player_standard_price = player["price"]
+    player_price_trend = player["priceIncrement"]
+    player_coef = (player_standard_price+player_price_trend) / player_standard_price
+    if player_coef < min:
+        min=player_coef
+    if player_coef > max:
+        max=player_coef
+    print(player_coef)
+    pprint(data['data']['players'][str(player_id)])
+    print('-' * 80)
+
+print(min)
+print(max)
 
 # for teams in data['data']['teams']:
 #     pprint(data['data']['teams'][str(teams)])
