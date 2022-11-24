@@ -98,13 +98,130 @@ my_team = [
     Player("Di María", "ATT", 22, 7.4, "ARG"),
 ]
 
+players_manual_boosts = [
+    Player("Al-Haydos", penalty_boost=0.7, strategy_boost=0.1),
+    Player("Afif", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Enner Valencia", penalty_boost=0.7, strategy_boost=0),
+    Player("Estupiñán", penalty_boost=0, strategy_boost=0.1),
+    Player("Ángel Mena", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Depay", penalty_boost=0.7, strategy_boost=0.1),
+    Player("Berghuis", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Sadio Mane", penalty_boost=0.7, strategy_boost=0.1),
+    Player("Boulaye Dia", penalty_boost=0.35, strategy_boost=0),
+    Player("Ismaila Sarr", penalty_boost=0.35, strategy_boost=0),
+    Player("Idrissa Gueye", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Harry Kane", penalty_boost=0.7, strategy_boost=0),
+    Player("Arnold", penalty_boost=0, strategy_boost=0.1),
+    Player("Trippier", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Gareth Bale", penalty_boost=0.7, strategy_boost=0.1),
+    Player("Harry Wilson", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Pulisic", penalty_boost=0.7, strategy_boost=0.1),
+    Player("Reyna", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Taremi", penalty_boost=0.7, strategy_boost=0),
+    Player("Sholizadeh", penalty_boost=0, strategy_boost=0.1),
+    Player("Jahanbaksh", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Messi", penalty_boost=0.7, strategy_boost=0.1),
+    Player("Di María", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Lewandowski", penalty_boost=0.7, strategy_boost=0.1),
+    Player("Zielinski", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Al-Faraj", penalty_boost=0.7, strategy_boost=0.1),
+    Player("Al-Dawsari", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Raúl Jiménez", penalty_boost=0.7, strategy_boost=0),
+    Player("Héctor Herrera", penalty_boost=0, strategy_boost=0.1),
+    Player("Guardado", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Mbappe", penalty_boost=0.7, strategy_boost=0),
+    Player("Griezmann", penalty_boost=0, strategy_boost=0.1),
+    Player("Theo Hernández", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Jamie Maclaren", penalty_boost=0.7, strategy_boost=0),
+    Player("Aaron Moy", penalty_boost=0, strategy_boost=0.1),
+    Player("Hrustic", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Eriksen", penalty_boost=0.7, strategy_boost=0.1),
+    Player("Braithwaite", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Khazri", penalty_boost=0.7, strategy_boost=0.1),
+    Player("Laïdouni", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Morata", penalty_boost=0.7, strategy_boost=0),
+    Player("Ferrán Torres", penalty_boost=0.4, strategy_boost=0),
+    Player("Pablo Sarabia", penalty_boost=0, strategy_boost=0.1),
+    Player("Koke", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Celso Borges", penalty_boost=0.7, strategy_boost=0.1),
+    Player("Joel Campbell", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Gundogan", penalty_boost=0.7, strategy_boost=0.1),
+    Player("Kimmich", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Lukaku", penalty_boost=0.7, strategy_boost=0),
+    Player("Eden Hazard", penalty_boost=0.5, strategy_boost=0),
+    Player("De Bruyne", penalty_boost=0, strategy_boost=0.1),
+    Player("Carrasco", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Cyle Larin", penalty_boost=0.7, strategy_boost=0),
+    Player("Alphonso Davies", penalty_boost=0.4, strategy_boost=0.1),
+    Player("Eustáquio", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Modric", penalty_boost=0.7, strategy_boost=0.1),
+    Player("Brozovic", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Boufal", penalty_boost=0.7, strategy_boost=0),
+    Player("Ziyech", penalty_boost=0.35, strategy_boost=0.1),
+    Player("Achraf Hakimi", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Neymar", penalty_boost=0.7, strategy_boost=0.1),
+    Player("Casemiro", penalty_boost=0, strategy_boost=0.1),
+    Player("Raphinha", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Ricardo Rodríguez", penalty_boost=0.7, strategy_boost=0.1),
+    Player("Shaquiri", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Aboubakar", penalty_boost=0.7, strategy_boost=0),
+    Player("Ngamaleu", penalty_boost=0.3, strategy_boost=0.1),
+    Player("Ekambi", penalty_boost=0, strategy_boost=0.1),
+    Player("Choupo-Moting", penalty_boost=0.3, strategy_boost=0),
+
+    Player("Tadic", penalty_boost=0.7, strategy_boost=0.05),
+    Player("Milinkovic-Savic", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Cristiano Ronaldo", penalty_boost=0.7, strategy_boost=0.1),
+    Player("Bernardo Silva", penalty_boost=0, strategy_boost=0.1),
+    Player("Bruno Fernandes", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Thomas Partey", penalty_boost=0.2, strategy_boost=0.1),
+    Player("Jordan Ayew", penalty_boost=0.2, strategy_boost=0.1),
+    Player("Iñaki Williams", penalty_boost=0.2, strategy_boost=0),
+
+    Player("Luis Suárez", penalty_boost=0.7, strategy_boost=0),
+    Player("Cavani", penalty_boost=0.5, strategy_boost=0),
+    Player("De Arrascaeta", penalty_boost=0, strategy_boost=0.1),
+    Player("Fede Valverde", penalty_boost=0, strategy_boost=0.1),
+
+]
+
 # best_transfers(my_team, playersDB, 4, n_results=50)
 
 # all_teams, all_players = get_worldcup_data()
-# 
+#
+# max_elo = all_teams[0].elo
 # for team in all_teams:
+#     elo_dif = max_elo - team.elo
 #     print(team)
-# 
+#     print(elo_dif)
+#
 # for player in all_players:
 #     print(player)
 

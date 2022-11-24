@@ -13,7 +13,8 @@ class Player:
             standard_price: float = 0,
             price_trend: float = 0,
             fitness: list = [None, None, None, None, None],
-            penalty_boost: float = 0
+            penalty_boost: float = 0,
+            strategy_boost: float = 0
     ):
         self.name = name
         self.position = position
@@ -25,6 +26,7 @@ class Player:
         self.price_trend = price_trend
         self.fitness = fitness
         self.penalty_boost = penalty_boost
+        self.strategy_boost = strategy_boost
 
     def __str__(self):
         return f"({self.name}, {self.position}, {self.price}, {self.value}, {self.country})"
