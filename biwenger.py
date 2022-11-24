@@ -121,23 +121,23 @@ data = json.loads( re.findall(r'jsonp_xxx\((.*)\)', response.text)[0] )
 # pprint(data["data"]["players"])
 #
 # print(type(data['data']['players']["29346"]["fitness"][0]))
-min=10000
-max=0
-for player_id in data['data']['players']:
-    player = data['data']['players'][str(player_id)]
-    player_standard_price = player["price"]
-    player_price_trend = player["priceIncrement"]
-    player_coef = (player_standard_price+player_price_trend) / player_standard_price
-    if player_coef < min:
-        min=player_coef
-    if player_coef > max:
-        max=player_coef
-    print(player_coef)
-    pprint(data['data']['players'][str(player_id)])
-    print('-' * 80)
-
-print(min)
-print(max)
+# min=10000
+# max=0
+# for player_id in data['data']['players']:
+#     player = data['data']['players'][str(player_id)]
+#     player_standard_price = player["price"]
+#     player_price_trend = player["priceIncrement"]
+#     player_coef = (player_standard_price+player_price_trend) / player_standard_price
+#     if player_coef < min:
+#         min=player_coef
+#     if player_coef > max:
+#         max=player_coef
+#     print(player_coef)
+#     pprint(data['data']['players'][str(player_id)])
+#     print('-' * 80)
+#
+# print(min)
+# print(max)
 
 # for teams in data['data']['teams']:
 #     pprint(data['data']['teams'][str(teams)])
