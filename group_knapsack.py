@@ -1,5 +1,6 @@
 import copy
 import itertools
+import math
 
 from MCKP import multipleChoiceKnapsack, knapsack_multichoice, \
     knapsack_multichoice_onepick
@@ -37,20 +38,24 @@ def best_full_teams(players_list, formations=possible_formations, budget=300, ve
 
         formation_score_players.append((formation, score, result_players))
 
-        if verbose:
-            print("With formation " + str(formation) + ": " + str(score))
-            for best_player in result_players:
-                print(best_player)
-            print()
-            print()
-
     formation_score_players_by_score = sorted(formation_score_players, key=lambda tup: tup[1],
                                       reverse=True)
     if verbose:
-        for final_formation_score in formation_score_players_by_score:
-            print((final_formation_score[0], final_formation_score[1]))
+        print_best_full_teams(formation_score_players_by_score)
 
     return formation_score_players_by_score
+
+
+def print_best_full_teams(best_results_teams):
+    for best_result in best_results_teams:
+        formation, score, result_players = best_result
+        print("With formation " + str(formation) + ": " + str(score))
+        for best_player in result_players:
+            print(best_player)
+        print()
+        print()
+    for best_result in best_results_teams:
+        print((best_result[0], best_result[1]))
 
 
 def players_preproc(players_list, formation):
@@ -108,7 +113,7 @@ def group_preproc(group_values, group_weights, initial_indexes, r):
     return group_comb_values, group_comb_weights, comb_indexes
 
 
-def best_transfers(past_team, players_list, n_transfers, formations=possible_formations, budget=300, n_results=5, verbose=True):
+def best_transfers(past_team, players_list, n_transfers, formations=possible_formations, budget=300, n_results=5, verbose=True, by_n_transfers=False):
     players_not_in_list, past_team_indexes = check_team(past_team, players_list)
     if players_not_in_list:
         if verbose:
@@ -143,21 +148,48 @@ def best_transfers(past_team, players_list, n_transfers, formations=possible_for
 
     all_possible_transfers_sorted = sorted(all_possible_transfers, key=lambda tup: (tup[1], tup[3]), reverse=True)
 
-    best_possible_transfers = all_possible_transfers_sorted[0:n_results-1]
-
-    if verbose:
-        for best_result in best_possible_transfers:
-            formation, score, result_players, n_non_changed_players = best_result
-            print("With formation " + str(formation) + ": " + str(score))
-            print("Number of changes = " + str(len(result_players) - n_non_changed_players))
-            for best_player in result_players:
-                print(best_player)
-            print()
-            print()
-        for best_result in best_possible_transfers:
-            print((best_result[0], best_result[1]))
+    if by_n_transfers:
+        grouped_best_possible_transfers = group_by_n(all_possible_transfers_sorted, n_transfers, len(past_team))
+        best_possible_transfers = []
+        new_n_results = math.ceil(n_results/n_transfers)
+        for group_transfers in grouped_best_possible_transfers:
+            best_possible_transfers.append(grouped_best_possible_transfers[0:min(len(group_transfers), new_n_results - 1)])
+        if verbose:
+            for grouped_results in best_possible_transfers:
+                print_transfers(grouped_results)
+    else:
+        best_possible_transfers = all_possible_transfers_sorted[0:n_results - 1]
+        if verbose:
+            print_transfers(best_possible_transfers)
 
     return best_possible_transfers
+
+
+def print_transfers(transfers):
+    for best_result in transfers:
+        formation, score, result_players, n_non_changed_players = best_result
+        print("With formation " + str(formation) + ": " + str(score))
+        print("Number of changes = " + str(
+            len(result_players) - n_non_changed_players))
+        for best_player in result_players:
+            print(best_player)
+        print()
+        print()
+    for best_result in transfers:
+        print((best_result[0], best_result[1]))
+
+
+def group_by_n(formation_score_players_stay_list, n, stay):
+    results = [[] for _ in range(n + 1)]
+    for pos_solution in formation_score_players_stay_list:
+        for i in range(stay-n, stay+1):
+            staying = pos_solution[3]
+            if staying == i:
+                results[i].append(pos_solution)
+                break
+    for grouped_result in results:
+        grouped_result.sort(key=lambda tup: (tup[1], tup[3]), reverse=True)
+    return results
 
 
 def check_team(team, players_list):

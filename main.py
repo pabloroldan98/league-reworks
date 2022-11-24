@@ -1,3 +1,4 @@
+import copy
 
 # Look at: https://stackoverflow.com/questions/74503207/knapsack-with-specific-amount-of-items-from-different-groups
 
@@ -247,4 +248,26 @@ players_manual_boosts = [
 # for playerName in attrs:
 #     print(playerName)
 
+
+def purge_injured_players(players_list):
+    result_players = [player for player in players_list if
+                      player.status == "ok"]
+    return result_players
+
+
+def purge_non_starting_players(players_list):
+    result_players = [player for player in players_list if
+                      player.fitness is not None]
+    return result_players
+
+
+def add_manual_boosts(players_list, manual_boosts):
+    result_players = copy.deepcopy(players_list)
+    for boosted_player in manual_boosts:
+        for player in result_players:
+            if boosted_player == player:
+                player.penalty_boost = boosted_player.penalty_boost
+                player.strategy_boost = boosted_player.strategy_boost
+                break
+    return result_players
 
