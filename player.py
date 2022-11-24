@@ -1,3 +1,5 @@
+from unidecode import unidecode
+
 
 class Player:
     def __init__(
@@ -10,7 +12,8 @@ class Player:
             status: str = "ok",
             standard_price: float = 0,
             price_trend: float = 0,
-            fitness: list = [None, None, None, None, None]
+            fitness: list = [None, None, None, None, None],
+            penalty_boost: float = 0
     ):
         self.name = name
         self.position = position
@@ -21,6 +24,7 @@ class Player:
         self.standard_price = standard_price
         self.price_trend = price_trend
         self.fitness = fitness
+        self.penalty_boost = penalty_boost
 
     def __str__(self):
         return f"({self.name}, {self.position}, {self.price}, {self.value}, {self.country})"
@@ -52,6 +56,13 @@ class Player:
         else:
             return False
 
+    def __eq__(self, other_player):
+        if unidecode(self.name).lower() in unidecode(other_player.name).lower() \
+                or unidecode(other_player.name).lower() in unidecode(self.name).lower():
+            return True
+        else:
+            return False
+
 
 def get_position(group):
     if group == 1:
@@ -63,3 +74,8 @@ def get_position(group):
     else:
         position = "ATT"
     return position
+
+# p1 = Player("Mákĉge")
+# p2 = Player("makcge")
+#
+# print(p1==p2)

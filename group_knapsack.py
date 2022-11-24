@@ -1,8 +1,6 @@
 import copy
 import itertools
 
-from unidecode import unidecode
-
 from MCKP import multipleChoiceKnapsack, knapsack_multichoice, \
     knapsack_multichoice_onepick
 
@@ -167,8 +165,7 @@ def check_team(team, players_list):
     team_indexes = []
     for current_player in team:
         for player_index, player in enumerate(players_list):
-            if unidecode(current_player.name).lower() in unidecode(player.name).lower() \
-                    or unidecode(player.name).lower() in unidecode(current_player.name).lower():
+            if current_player == player:
                 missing_players.remove(current_player)
                 team_indexes.append(player_index)
                 break
@@ -207,8 +204,7 @@ def get_real_score(formation_fakescore_players, players_list):
     realscore_team = []
     for current_player in fakescore_team:
         for player in players_list:
-            if unidecode(current_player.name).lower() in unidecode(player.name).lower() \
-                    or unidecode(player.name).lower() in unidecode(current_player.name).lower():
+            if current_player == player:
                 realscore = realscore + player.value
                 realscore_team.append(player)
                 break
