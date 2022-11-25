@@ -5,8 +5,11 @@ from pprint import pprint
 
 from biwenger import get_worldcup_data
 from group_knapsack import best_full_teams, best_transfers
-from player import Player, set_players_value_with_last_fitness
+from player import Player, set_players_value_to_last_fitness, set_manual_boosts, \
+    set_players_elo_dif, set_players_sofascore_rating, set_players_value, \
+    purge_everything
 from OLD_group_knapsack import best_squads, best_teams
+from sofascore import get_players_ratings_list
 
 playersDB_example = [
     Player("Mendy", "GK", 20, 6.8, "SEN"),
@@ -148,7 +151,9 @@ players_manual_boosts = [
     Player("Theo Hernández", penalty_boost=0, strategy_boost=0.1),
 
     Player("Jamie Maclaren", penalty_boost=0.7, strategy_boost=0),
-    Player("Aaron Moy", penalty_boost=0, strategy_boost=0.1),
+    Player("Jason Cummings", penalty_boost=0.3, strategy_boost=0),
+    Player("Craig Goodwin", penalty_boost=0.2, strategy_boost=0),
+    Player("Aaron Moy", penalty_boost=0.5, strategy_boost=0.1),
     Player("Hrustic", penalty_boost=0, strategy_boost=0.1),
 
     Player("Eriksen", penalty_boost=0.7, strategy_boost=0.1),
@@ -164,6 +169,12 @@ players_manual_boosts = [
 
     Player("Celso Borges", penalty_boost=0.7, strategy_boost=0.1),
     Player("Joel Campbell", penalty_boost=0, strategy_boost=0.1),
+
+    Player("Kamada", penalty_boost=0.3, strategy_boost=0),
+    Player("Ritsu Doan", penalty_boost=0.5, strategy_boost=0),
+    Player("Minamino", penalty_boost=0.5, strategy_boost=0),
+    Player("Takefusa Kubo", penalty_boost=0, strategy_boost=0.1),
+    Player("Kaoru Mitoma", penalty_boost=0, strategy_boost=0.1),
 
     Player("Gundogan", penalty_boost=0.7, strategy_boost=0.1),
     Player("Kimmich", penalty_boost=0, strategy_boost=0.1),
@@ -212,26 +223,57 @@ players_manual_boosts = [
     Player("De Arrascaeta", penalty_boost=0, strategy_boost=0.1),
     Player("Fede Valverde", penalty_boost=0, strategy_boost=0.1),
 
+    Player("Son", penalty_boost=0.7, strategy_boost=0.1),
+    Player("Jae Sung Lee", penalty_boost=0, strategy_boost=0.1),
+
 ]
 
 
+def get_current_players():
+    all_teams, all_players = get_worldcup_data()
+    players_ratings_list = get_players_ratings_list()
+
+    partial_players_plus_boosts = set_manual_boosts(all_players, players_manual_boosts)
+    partial_players_plus_elo = set_players_elo_dif(partial_players_plus_boosts, all_teams)
+    partial_players_plus_sofascore_rating = set_players_sofascore_rating(partial_players_plus_elo, players_ratings_list)
+    full_players = set_players_value(partial_players_plus_sofascore_rating)
+
+    return full_players
+
+
+
+def get_last_jornada_players():
+    all_teams, all_players = get_worldcup_data()
+    return set_players_value_to_last_fitness(all_players)
+
 # Begin:
 
-all_teams, all_players = get_worldcup_data()
 
-last_jornada_players = set_players_value_with_last_fitness(all_players)
+# last_jornada_players = get_last_jornada_players()
+# best_full_teams(last_jornada_players, possible_formations, 300, super_verbose=True)
 
-for players in last_jornada_players:
-    print(players)
 
+current_players = get_current_players()
+
+worthy_players = sorted(current_players, key=lambda x: x.value/x.price, reverse=True)
+for player in worthy_players:
+    print(player)
 print()
-best_full_teams(last_jornada_players, possible_formations, 300, super_verbose=True)
+purged_players = purge_everything(worthy_players)
+
+best_full_teams(purged_players, possible_formations, 300, super_verbose=True)
+
 
 
 
 
 #####################################
 # Testing:
+
+
+# all_teams, all_players = get_worldcup_data()
+# for players in last_jornada_players:
+#     print(players)
 
 # best_transfers(my_team, playersDB_example, 4, n_results=50)
 

@@ -42,7 +42,8 @@ def get_teams_worldcup_data(data):
         worldcup_team = worldcup_teams[str(worldcup_team_id)]
 
         team_name = worldcup_team["name"]
-        team_next_opponent = get_next_opponent(worldcup_team_id, worldcup_teams)
+        team_next_opponent = get_next_opponent(int(worldcup_team_id), worldcup_teams)
+        team_name_next_opponent = team_next_opponent["name"]
 
         if team_name in teams_elos_dict:
             team_elo = teams_elos_dict[team_name]
@@ -53,7 +54,7 @@ def get_teams_worldcup_data(data):
 
         new_team = Team(
             team_name,
-            team_next_opponent,
+            team_name_next_opponent,
             team_elo
         )
         worldcup_teams_db.append(new_team)
@@ -64,10 +65,10 @@ def get_teams_worldcup_data(data):
 def get_next_opponent(team_id, teams):
     my_team = teams[str(team_id)]
 
-    next_team_home_id = my_team["nextGames"][0]["home"]["id"]
-    next_team_away_id = my_team["nextGames"][0]["away"]["id"]
+    next_team_home_id = int(my_team["nextGames"][0]["home"]["id"])
+    next_team_away_id = int(my_team["nextGames"][0]["away"]["id"])
 
-    if team_id != next_team_home_id:
+    if int(team_id) != next_team_home_id:
         next_team = teams[str(next_team_home_id)]
     else:
         next_team = teams[str(next_team_away_id)]

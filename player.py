@@ -1,5 +1,6 @@
 import copy
 
+import numpy as np
 from unidecode import unidecode
 
 
@@ -75,7 +76,7 @@ class Player:
         form_coef = (self.standard_price + self.price_trend) / self.standard_price
         elo_coef = self.next_match_elo_dif * 0.0002 + 1  # * 0.1/500 + 1
 
-        predicted_value = ((self.sofascore_rating * form_coef) + self.penalty_boost + self.strategy_boost) * elo_coef
+        predicted_value = ((float(self.sofascore_rating) * float(form_coef)) + float(self.penalty_boost) + float(self.strategy_boost)) * float(elo_coef)
         return predicted_value
 
     def set_value(self):
@@ -95,21 +96,43 @@ def get_position(group):
     return position
 
 
+def purge_everything(players_list, nations_to_purge=[]):
+    purged_players = purge_injured_players(players_list)
+    repurged_players = purge_no_country_players(purged_players)
+    rerepurged_players = purge_non_starting_players(repurged_players)
+    rererepurged_players = purge_negative_values(rerepurged_players)
+    solution = purge_national_teams(rererepurged_players, nations_to_purge)
+
+    return solution
+
+
 def purge_injured_players(players_list):
     result_players = [player for player in players_list if
                       player.status == "ok"]
     return result_players
 
 
+def purge_no_country_players(players_list):
+    result_players = [player for player in players_list if
+                      player.country != "None"]
+    return result_players
+
+
 def purge_non_starting_players(players_list):
     result_players = [player for player in players_list if
-                      isinstance(player.fitness[0], int)]
+                      isinstance(player.fitness[0], int) or isinstance(player.fitness[1], int)]
     return result_players
 
 
 def purge_negative_values(players_list):
     result_players = [player for player in players_list if
                       player.value > 0]
+    return result_players
+
+
+def purge_national_teams(players_list, nations_to_purge):
+    result_players = [player for player in players_list if
+                      player.country not in nations_to_purge]
     return result_players
 
 
@@ -124,8 +147,10 @@ def set_manual_boosts(players_list, manual_boosts):
     return result_players
 
 
-def set_players_dif_elo(players_list, teams_list):
-    checked_teams = check_teams(players_list, teams_list)
+def set_players_elo_dif(players_list, teams_list):
+    result_players = copy.deepcopy(players_list)
+    clean_players = purge_no_country_players(result_players)
+    checked_teams = check_teams(clean_players, teams_list)
     if len(checked_teams) != len(teams_list):
         print("The following teams do NOT match your Databases:")
         for team in teams_list:
@@ -135,12 +160,12 @@ def set_players_dif_elo(players_list, teams_list):
 
     teams_dict = {team.name: team for team in teams_list}
 
-    for player in players_list:
+    for player in clean_players:
         player_team = teams_dict[player.country]
         opponent_team = teams_dict[player_team.next_opponent]
         elo_dif = player_team.elo - opponent_team.elo
         player.next_match_elo_dif = elo_dif
-    return players_list
+    return clean_players
 
 
 def check_teams(players_list, teams_list):
@@ -152,16 +177,41 @@ def check_teams(players_list, teams_list):
     return count
 
 
+def set_players_sofascore_rating(players_list, players_ratings_list):
+    result_players = copy.deepcopy(players_list)
+    for rated_players in players_ratings_list:
+        for player in result_players:
+            if rated_players == player:
+                player.sofascore_rating = rated_players.sofascore_rating
+                break
+    return result_players
+
+
 def set_players_value(players_list):
-    for player in players_list:
+    result_players = copy.deepcopy(players_list)
+    for player in result_players:
         player.set_value()
-    return players_list
+    return result_players
 
 
-def set_players_value_with_last_fitness(players_list):
+def set_players_value_to_last_fitness(players_list):
     purged_list = purge_non_starting_players(players_list)
     for player in purged_list:
-        player.value = float(player.fitness[0])
+        if player.fitnesss[0] is None:
+            player.value = float(player.fitness[1])
+        else:
+            player.value = float(player.fitness[0])
+    repurged_list = purge_negative_values(purged_list)
+    return repurged_list
+
+
+def set_players_value_to_last_fitness(players_list):
+    purged_list = purge_non_starting_players(players_list)
+    for player in purged_list:
+        if player.fitnesss[0] is None:
+            player.value = float(player.fitness[1])
+        else:
+            player.value = float(player.fitness[0])
     repurged_list = purge_negative_values(purged_list)
     return repurged_list
 
