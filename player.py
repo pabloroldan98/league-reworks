@@ -14,7 +14,9 @@ class Player:
             price_trend: float = 0,
             fitness: list = [None, None, None, None, None],
             penalty_boost: float = 0,
-            strategy_boost: float = 0
+            strategy_boost: float = 0,
+            sofascore_rating: float = 0,
+            next_match_elo_dif: float = 0
     ):
         self.name = name
         self.position = position
@@ -27,6 +29,8 @@ class Player:
         self.fitness = fitness
         self.penalty_boost = penalty_boost
         self.strategy_boost = strategy_boost
+        self.sofascore_rating = sofascore_rating
+        self.next_match_elo_dif = next_match_elo_dif
 
     def __str__(self):
         return f"({self.name}, {self.position}, {self.price}, {self.value}, {self.country})"
@@ -64,6 +68,17 @@ class Player:
             return True
         else:
             return False
+
+    def calc_value(self):
+        form_coef = (self.standard_price + self.price_trend) / self.standard_price
+        elo_coef = self.next_match_elo_dif * 0.0002 + 1 # * 0.1/500 + 1
+
+        predicted_value = ((self.sofascore_rating * form_coef) + self.penalty_boost + self.strategy_boost) * elo_coef
+        return predicted_value
+
+    def set_value(self):
+        predicted_value = self.calc_value()
+        self.value = predicted_value
 
 
 def get_position(group):
