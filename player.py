@@ -71,7 +71,7 @@ class Player:
 
     def calc_value(self):
         form_coef = (self.standard_price + self.price_trend) / self.standard_price
-        elo_coef = self.next_match_elo_dif * 0.0002 + 1 # * 0.1/500 + 1
+        elo_coef = self.next_match_elo_dif * 0.0002 + 1  # * 0.1/500 + 1
 
         predicted_value = ((self.sofascore_rating * form_coef) + self.penalty_boost + self.strategy_boost) * elo_coef
         return predicted_value
