@@ -191,14 +191,14 @@ def knapsack_multichoice_onepick(weights, values, max_weight, verbose=False):
                     threshold = threshold + 1
         last_array = current_array
         last_path = current_path
-
+    if verbose:
+        print("100 %")
     solution, index_path = get_onepick_solution(last_array, last_path)
 
     return solution, index_path
 
 
 def get_onepick_solution(scores, paths):
-
     scores_paths = list(zip(scores, paths))
     scores_paths_by_score = sorted(scores_paths, key=lambda tup: tup[0], reverse=True)
 

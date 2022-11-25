@@ -38,6 +38,8 @@ def best_full_teams(players_list, formations=possible_formations, budget=300, ve
 
         formation_score_players.append((formation, score, result_players))
 
+        print_best_full_teams(formation_score_players)
+
     formation_score_players_by_score = sorted(formation_score_players, key=lambda tup: tup[1],
                                       reverse=True)
     if verbose:
