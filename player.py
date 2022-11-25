@@ -8,7 +8,7 @@ class Player:
             self,
             name: str,
             position: str = "GK",
-            price: float = 100000,
+            price: int = 100000,
             value: float = 0,
             country: str = "Spain",
             status: str = "ok",
@@ -103,11 +103,17 @@ def purge_injured_players(players_list):
 
 def purge_non_starting_players(players_list):
     result_players = [player for player in players_list if
-                      player.fitness is not None]
+                      isinstance(player.fitness[0], int)]
     return result_players
 
 
-def add_manual_boosts(players_list, manual_boosts):
+def purge_negative_values(players_list):
+    result_players = [player for player in players_list if
+                      player.value > 0]
+    return result_players
+
+
+def set_manual_boosts(players_list, manual_boosts):
     result_players = copy.deepcopy(players_list)
     for boosted_player in manual_boosts:
         for player in result_players:
@@ -134,6 +140,7 @@ def set_players_dif_elo(players_list, teams_list):
         opponent_team = teams_dict[player_team.next_opponent]
         elo_dif = player_team.elo - opponent_team.elo
         player.next_match_elo_dif = elo_dif
+    return players_list
 
 
 def check_teams(players_list, teams_list):
@@ -148,5 +155,14 @@ def check_teams(players_list, teams_list):
 def set_players_value(players_list):
     for player in players_list:
         player.set_value()
+    return players_list
+
+
+def set_players_value_with_last_fitness(players_list):
+    purged_list = purge_non_starting_players(players_list)
+    for player in purged_list:
+        player.value = float(player.fitness[0])
+    repurged_list = purge_negative_values(purged_list)
+    return repurged_list
 
 

@@ -5,10 +5,10 @@ from pprint import pprint
 
 from biwenger import get_worldcup_data
 from group_knapsack import best_full_teams, best_transfers
-from player import Player
+from player import Player, set_players_value_with_last_fitness
 from OLD_group_knapsack import best_squads, best_teams
 
-playersDB = [
+playersDB_example = [
     Player("Mendy", "GK", 20, 6.8, "SEN"),
     Player("Matt Turner", "GK", 11, 7.4, "USA"),
     Player("Szczesny", "GK", 19, 7.4, "POL"),
@@ -214,7 +214,22 @@ players_manual_boosts = [
 
 ]
 
-# best_transfers(my_team, playersDB, 4, n_results=50)
+
+# Begin:
+
+all_teams, all_players = get_worldcup_data()
+
+last_jornada_players = set_players_value_with_last_fitness(all_players)
+
+best_full_teams(last_jornada_players, possible_formations, 300, super_verbose=True)
+
+
+
+
+#####################################
+# Testing:
+
+# best_transfers(my_team, playersDB_example, 4, n_results=50)
 
 # all_teams, all_players = get_worldcup_data()
 #
@@ -235,7 +250,7 @@ players_manual_boosts = [
 # for player in all_players:
 #     print(player)
 
-# best_full_teams(playersDB, possible_formations, 300)
+# best_full_teams(playersDB_example, possible_formations, 300)
 
 
 # best_teams(playerDB, possible_formations, 300)

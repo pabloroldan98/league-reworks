@@ -159,7 +159,7 @@ def get_contrained_solution(scores, paths, count):
 # Original source: https://nickgavalas.com/solving-the-multiple-choice-knapsack-problem/
 # Translated by pabloroldan98
 
-def knapsack_multichoice_onepick(weights, values, max_weight):
+def knapsack_multichoice_onepick(weights, values, max_weight, verbose=False):
     if len(weights) == 0:
         return 0
 
@@ -172,6 +172,7 @@ def knapsack_multichoice_onepick(weights, values, max_weight):
                 last_path[weights[0][i]].append((0, i))
             # last_array[weight[0][i]] = max(last_array[weight[0][i]], value[0][i])
 
+    threshold = 0
     for i in range(1, len(weights)):
         current_array = [-1 for _ in range(max_weight + 1)]
         current_path = [[] for _ in range(max_weight + 1)]
@@ -185,6 +186,11 @@ def knapsack_multichoice_onepick(weights, values, max_weight):
                     # current_array[k] = max(current_array[k], last_array[k - weight[i][j]] + value[i][j])
         last_array = current_array
         last_path = current_path
+        if verbose:
+            percent = i/len(weights)*100
+            if percent >= threshold:
+                print(str(percent) + " %")
+                threshold = threshold + 1
 
     solution, index_path = get_onepick_solution(last_array, last_path)
 

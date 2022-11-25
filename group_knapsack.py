@@ -17,7 +17,7 @@ possible_formations = [
 ]
 
 
-def best_full_teams(players_list, formations=possible_formations, budget=300, verbose=True):
+def best_full_teams(players_list, formations=possible_formations, budget=300, verbose=True, super_verbose=False):
     # players_by_group = sorted(players_list, key=lambda x: x.get_group())
 
     formation_score_players = []
@@ -25,7 +25,7 @@ def best_full_teams(players_list, formations=possible_formations, budget=300, ve
     for formation in formations:
         players_values, players_prices, players_comb_indexes = players_preproc(players_list, formation)
 
-        score, comb_result_indexes = knapsack_multichoice_onepick(players_prices, players_values, budget)
+        score, comb_result_indexes = knapsack_multichoice_onepick(players_prices, players_values, budget, verbose=super_verbose)
 
         result_indexes = []
         for comb_index in comb_result_indexes:

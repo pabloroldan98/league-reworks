@@ -80,10 +80,10 @@ def get_players_worldcup_data(data):
         # pprint(worldcup_player)
         player_name = worldcup_player["name"]
         player_group = worldcup_player["position"]
-        player_price = worldcup_player["fantasyPrice"]/1000000
+        player_price = int(worldcup_player["fantasyPrice"]/1000000)
         player_status = worldcup_player["status"]
-        player_standard_price = worldcup_player["price"]
-        player_price_trend = worldcup_player["priceIncrement"]
+        player_standard_price = float(worldcup_player["price"])
+        player_price_trend = float(worldcup_player["priceIncrement"])
         player_fitness = worldcup_player["fitness"]
 
         player_team_id = str(worldcup_player["teamID"])
