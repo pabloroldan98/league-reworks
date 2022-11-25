@@ -221,6 +221,10 @@ all_teams, all_players = get_worldcup_data()
 
 last_jornada_players = set_players_value_with_last_fitness(all_players)
 
+for players in last_jornada_players:
+    print(players)
+
+print()
 best_full_teams(last_jornada_players, possible_formations, 300, super_verbose=True)
 
 

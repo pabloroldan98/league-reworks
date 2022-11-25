@@ -184,13 +184,13 @@ def knapsack_multichoice_onepick(weights, values, max_weight, verbose=False):
                         current_path[k] = copy.deepcopy(last_path[k - weights[i][j]])
                         current_path[k].append((i, j))
                     # current_array[k] = max(current_array[k], last_array[k - weight[i][j]] + value[i][j])
+            if verbose:
+                percent = (i*len(weights[i])+j)/(len(weights)*len(weights[i]))*100
+                if percent >= threshold:
+                    print(str(percent) + " %")
+                    threshold = threshold + 1
         last_array = current_array
         last_path = current_path
-        if verbose:
-            percent = i/len(weights)*100
-            if percent >= threshold:
-                print(str(percent) + " %")
-                threshold = threshold + 1
 
     solution, index_path = get_onepick_solution(last_array, last_path)
 

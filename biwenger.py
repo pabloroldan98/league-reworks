@@ -11,14 +11,20 @@ from eloratings import get_teams_elos
 from team import Team
 
 
-def get_worldcup_data():
+def get_worldcup_data(verbose=True):
 
     all_data_url = 'https://cf.biwenger.com/api/v2/competitions/world-cup/data?lang=en&score=1&callback=jsonp_xxx'
 
     response = requests.get(all_data_url)
     data = json.loads(re.findall(r'jsonp_xxx\((.*)\)', response.text)[0])
 
+    if verbose:
+        print("Loading teams data...")
+        print()
     worldcup_teams = get_teams_worldcup_data(data)
+    if verbose:
+        print("Loading players data...")
+        print()
     worldcup_players = get_players_worldcup_data(data)
 
     sorted_worldcup_teams = sorted(worldcup_teams, key=lambda x: x.elo, reverse=True)
