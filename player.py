@@ -1,3 +1,5 @@
+import copy
+
 from unidecode import unidecode
 
 
@@ -92,7 +94,59 @@ def get_position(group):
         position = "ATT"
     return position
 
-# p1 = Player("Mákĉge")
-# p2 = Player("makcge")
-#
-# print(p1==p2)
+
+def purge_injured_players(players_list):
+    result_players = [player for player in players_list if
+                      player.status == "ok"]
+    return result_players
+
+
+def purge_non_starting_players(players_list):
+    result_players = [player for player in players_list if
+                      player.fitness is not None]
+    return result_players
+
+
+def add_manual_boosts(players_list, manual_boosts):
+    result_players = copy.deepcopy(players_list)
+    for boosted_player in manual_boosts:
+        for player in result_players:
+            if boosted_player == player:
+                player.penalty_boost = boosted_player.penalty_boost
+                player.strategy_boost = boosted_player.strategy_boost
+                break
+    return result_players
+
+
+def set_players_dif_elo(players_list, teams_list):
+    checked_teams = check_teams(players_list, teams_list)
+    if len(checked_teams) != len(teams_list):
+        print("The following teams do NOT match your Databases:")
+        for team in teams_list:
+            if team.name not in checked_teams:
+                print(team.name)
+        return checked_teams
+
+    teams_dict = {team.name: team for team in teams_list}
+
+    for player in players_list:
+        player_team = teams_dict[player.country]
+        opponent_team = teams_dict[player_team.next_opponent]
+        elo_dif = player_team.elo - opponent_team.elo
+        player.next_match_elo_dif = elo_dif
+
+
+def check_teams(players_list, teams_list):
+    count = dict()
+    for player in players_list:
+        for team in teams_list:
+            if player.country == team.name:
+                count[player.country] = player.country
+    return count
+
+
+def set_players_value(players_list):
+    for player in players_list:
+        player.set_value()
+
+

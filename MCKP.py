@@ -210,8 +210,8 @@ W = 80
 
 
 # Example
-values = [[6, 10], [12, 2], [2, 3]]
-weights = [[1, 2], [6, 2], [3, 2]]
-W = 7
-
-print(knapsack_multichoice_onepick(weights, values, W))  # (15, [(0, 1), (1, 1), (2, 1)])
+# values = [[6, 10], [12, 2], [2, 3]]
+# weights = [[1, 2], [6, 2], [3, 2]]
+# W = 7
+#
+# print(knapsack_multichoice_onepick(weights, values, W))  # (15, [(0, 1), (1, 1), (2, 1)])
