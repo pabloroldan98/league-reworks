@@ -1,4 +1,5 @@
 # Source: https://github.com/Urbistondo/sofa-score-scraper/blob/master/player_scraper.py
+
 import csv
 import os
 
