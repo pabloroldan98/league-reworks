@@ -5,6 +5,7 @@ import json
 import requests
 from pprint import pprint
 from bs4 import BeautifulSoup
+from unidecode import unidecode
 
 from player import Player, get_position
 from eloratings import get_teams_elos
@@ -33,17 +34,29 @@ def get_worldcup_data(verbose=True):
     return sorted_worldcup_teams, sorted_worldcup_players
 
 
-def get_teams_worldcup_data(data):
-
-    worldcup_teams_db = []
+def get_teams_worldcup_data(data, forced_matches=[]):
     worldcup_teams = data['data']['teams']
     teams_elos_dict, short_teams_elos_dict = get_teams_elos()
+    worldcup_teams_db = create_teams_list(worldcup_teams, teams_elos_dict, short_teams_elos_dict, forced_matches)
+
+    return worldcup_teams_db
+
+
+def create_teams_list(worldcup_teams, teams_elos_dict, short_teams_elos_dict, forced_matches=[]):
+    teams_list = []
     for worldcup_team_id in worldcup_teams:
         worldcup_team = worldcup_teams[str(worldcup_team_id)]
 
         team_name = worldcup_team["name"]
-        team_next_opponent = get_next_opponent(int(worldcup_team_id), worldcup_teams)
+        team_next_opponent = get_next_opponent(int(worldcup_team_id),
+                                               worldcup_teams)
         team_name_next_opponent = team_next_opponent["name"]
+        if forced_matches:
+            for new_match in forced_matches:
+                if unidecode(team_name_next_opponent).lower() == unidecode(new_match[0]).lower():
+                    team_name_next_opponent = new_match[1]
+                if unidecode(team_name_next_opponent).lower() == unidecode(new_match[1]).lower():
+                    team_name_next_opponent = new_match[0]
 
         if team_name in teams_elos_dict:
             team_elo = teams_elos_dict[team_name]
@@ -57,9 +70,9 @@ def get_teams_worldcup_data(data):
             team_name_next_opponent,
             team_elo
         )
-        worldcup_teams_db.append(new_team)
+        teams_list.append(new_team)
 
-    return worldcup_teams_db
+    return teams_list
 
 
 def get_next_opponent(team_id, teams):
@@ -77,17 +90,21 @@ def get_next_opponent(team_id, teams):
 
 
 def get_players_worldcup_data(data):
-
-    worldcup_players_db = []
     worldcup_teams = data['data']['teams']
     worldcup_players = data['data']['players']
+    worldcup_players_db = create_players_list(worldcup_teams, worldcup_players)
+    return worldcup_players_db
+
+
+def create_players_list(worldcup_teams, worldcup_players):
+    players_list = []
     for worldcup_player_id in worldcup_players:
         worldcup_player = worldcup_players[str(worldcup_player_id)]
 
         # pprint(worldcup_player)
         player_name = worldcup_player["name"]
         player_group = worldcup_player["position"]
-        player_price = int(worldcup_player["fantasyPrice"]/1000000)
+        player_price = int(worldcup_player["fantasyPrice"] / 1000000)
         player_status = worldcup_player["status"]
         player_standard_price = float(worldcup_player["price"])
         player_price_trend = float(worldcup_player["priceIncrement"])
@@ -110,9 +127,10 @@ def get_players_worldcup_data(data):
             player_price_trend,
             player_fitness
         )
-        worldcup_players_db.append(new_player)
+        players_list.append(new_player)
+    return players_list
 
-    return worldcup_players_db
+
 
 # user_data_url = 'https://biwenger.as.com/api/v2/user/16728?fields=*,account(id),players(id,owner),lineups(round,points,count,position),league(id,name,competition,mode,scoreID),market,seasons,offers,lastPositions'
 # all_data_url = 'https://cf.biwenger.com/api/v2/competitions/world-cup/data?lang=en&score=1&callback=jsonp_xxx' # <--- check @αԋɱҽԃ αмєяιcαη answer, it's possible to do it without callback= parameter
