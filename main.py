@@ -229,17 +229,20 @@ players_manual_boosts = [
 ]
 
 
-def get_current_players():
+
+jornada_01 = [("Qatar", "Ecuador"), ("England, Iran"), ("Senegal", "Netherlands"), ("USA", "Wales"), ("Qatar", "Ecuador"), ("Qatar", "Ecuador"), ("Qatar", "Ecuador"), ("Qatar", "Ecuador"), ("Qatar", "Ecuador"), ("Qatar", "Ecuador"), ("Qatar", "Ecuador"), ("Qatar", "Ecuador"), ("Qatar", "Ecuador"), ("Qatar", "Ecuador"), ("Qatar", "Ecuador"), ("Qatar", "Ecuador"), ]
+
+
+def get_current_players(no_form=False, no_fixtures=False, forced_matches=[]):
     all_teams, all_players = get_worldcup_data()
     players_ratings_list = get_players_ratings_list()
 
     partial_players_plus_boosts = set_manual_boosts(all_players, players_manual_boosts)
     partial_players_plus_elo = set_players_elo_dif(partial_players_plus_boosts, all_teams)
     partial_players_plus_sofascore_rating = set_players_sofascore_rating(partial_players_plus_elo, players_ratings_list)
-    full_players = set_players_value(partial_players_plus_sofascore_rating)
+    full_players = set_players_value(partial_players_plus_sofascore_rating, no_form, no_fixtures)
 
     return full_players
-
 
 
 def get_last_jornada_players():
@@ -248,20 +251,23 @@ def get_last_jornada_players():
 
 # Begin:
 
-
 # last_jornada_players = get_last_jornada_players()
 # best_full_teams(last_jornada_players, possible_formations, 300, super_verbose=True)
 
 
-current_players = get_current_players()
+current_players = get_current_players(forced_matches=jornada_01)
 
-worthy_players = sorted(current_players, key=lambda x: x.value/x.price, reverse=True)
-for player in worthy_players:
-    print(player)
-print()
+# worthy_players = sorted(current_players, key=lambda x: x.value/x.price, reverse=True)
+worthy_players = sorted(current_players, key=lambda x: x.value, reverse=True)
+
 purged_players = purge_everything(worthy_players)
 
-best_full_teams(purged_players, possible_formations, 300, super_verbose=True)
+for player in worthy_players:
+    # print(player)
+    print(player.name + ",")
+print()
+#
+# best_full_teams(purged_players, possible_formations, 300, super_verbose=True)
 
 
 

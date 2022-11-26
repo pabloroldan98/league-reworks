@@ -12,7 +12,7 @@ from eloratings import get_teams_elos
 from team import Team
 
 
-def get_worldcup_data(verbose=True):
+def get_worldcup_data(forced_matches=[], verbose=True):
 
     all_data_url = 'https://cf.biwenger.com/api/v2/competitions/world-cup/data?lang=en&score=1&callback=jsonp_xxx'
 
@@ -22,7 +22,7 @@ def get_worldcup_data(verbose=True):
     if verbose:
         print("Loading teams data...")
         print()
-    worldcup_teams = get_teams_worldcup_data(data)
+    worldcup_teams = get_teams_worldcup_data(data, forced_matches)
     if verbose:
         print("Loading players data...")
         print()

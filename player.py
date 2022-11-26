@@ -72,15 +72,19 @@ class Player:
         else:
             return False
 
-    def calc_value(self):
+    def calc_value(self, no_form=False, no_fixtures=False):
         form_coef = (self.standard_price + self.price_trend) / self.standard_price
         elo_coef = self.next_match_elo_dif * 0.0002 + 1  # * 0.1/500 + 1
+        if no_form:
+            form_coef = 1
+        if no_fixtures:
+            elo_coef = 1
 
         predicted_value = ((float(self.sofascore_rating) * float(form_coef)) + float(self.penalty_boost) + float(self.strategy_boost)) * float(elo_coef)
         return predicted_value
 
-    def set_value(self):
-        predicted_value = self.calc_value()
+    def set_value(self, no_form=False, no_fixtures=False):
+        predicted_value = self.calc_value(no_form, no_fixtures)
         self.value = predicted_value
 
 
@@ -187,10 +191,10 @@ def set_players_sofascore_rating(players_list, players_ratings_list):
     return result_players
 
 
-def set_players_value(players_list):
+def set_players_value(players_list, no_form=False, no_fixtures=False):
     result_players = copy.deepcopy(players_list)
     for player in result_players:
-        player.set_value()
+        player.set_value(no_form, no_fixtures)
     return result_players
 
 
