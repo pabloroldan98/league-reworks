@@ -66,8 +66,14 @@ class Player:
             return False
 
     def __eq__(self, other_player):
-        if unidecode(self.name).lower() in unidecode(other_player.name).lower() \
-                or unidecode(other_player.name).lower() in unidecode(self.name).lower():
+        if unidecode(str(self.name)).lower().replace(" ", "").replace("-", "") in unidecode(str(other_player.name)).lower().replace(" ", "").replace("-", "") \
+                or unidecode(str(other_player.name)).lower().replace(" ", "").replace("-", "") in unidecode(str(self.name)).lower().replace(" ", "").replace("-", ""):
+            return True
+        else:
+            return False
+
+    def stricter_equal(self, other_player):
+        if unidecode(str(self.name)).lower().replace(" ", "").replace("-", "") == unidecode(str(other_player.name)).lower().replace(" ", "").replace("-", ""):
             return True
         else:
             return False
@@ -183,10 +189,15 @@ def check_teams(players_list, teams_list):
 
 def set_players_sofascore_rating(players_list, players_ratings_list):
     result_players = copy.deepcopy(players_list)
-    for rated_players in players_ratings_list:
+    for rated_player in players_ratings_list:
         for player in result_players:
-            if rated_players == player:
-                player.sofascore_rating = rated_players.sofascore_rating
+            if rated_player == player:
+                player.sofascore_rating = rated_player.sofascore_rating
+                break
+    for rated_player in players_ratings_list:
+        for player in result_players:
+            if rated_player.stricter_equal(player):
+                player.sofascore_rating = rated_player.sofascore_rating
                 break
     return result_players
 

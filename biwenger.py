@@ -22,7 +22,7 @@ def get_worldcup_data(forced_matches=[], verbose=True):
     if verbose:
         print("Loading teams data...")
         print()
-    worldcup_teams = get_teams_worldcup_data(data, forced_matches)
+    worldcup_teams = get_teams_worldcup_data(data, forced_matches=forced_matches)
     if verbose:
         print("Loading players data...")
         print()
@@ -37,7 +37,7 @@ def get_worldcup_data(forced_matches=[], verbose=True):
 def get_teams_worldcup_data(data, forced_matches=[]):
     worldcup_teams = data['data']['teams']
     teams_elos_dict, short_teams_elos_dict = get_teams_elos()
-    worldcup_teams_db = create_teams_list(worldcup_teams, teams_elos_dict, short_teams_elos_dict, forced_matches)
+    worldcup_teams_db = create_teams_list(worldcup_teams, teams_elos_dict, short_teams_elos_dict, forced_matches=forced_matches)
 
     return worldcup_teams_db
 
@@ -53,10 +53,12 @@ def create_teams_list(worldcup_teams, teams_elos_dict, short_teams_elos_dict, fo
         team_name_next_opponent = team_next_opponent["name"]
         if forced_matches:
             for new_match in forced_matches:
-                if unidecode(team_name_next_opponent).lower() == unidecode(new_match[0]).lower():
-                    team_name_next_opponent = new_match[1]
-                if unidecode(team_name_next_opponent).lower() == unidecode(new_match[1]).lower():
-                    team_name_next_opponent = new_match[0]
+                home_team = new_match[0]
+                away_team = new_match[1]
+                if unidecode(team_name).lower() == unidecode(home_team).lower():
+                    team_name_next_opponent = away_team
+                if unidecode(team_name).lower() == unidecode(away_team).lower():
+                    team_name_next_opponent = home_team
 
         if team_name in teams_elos_dict:
             team_elo = teams_elos_dict[team_name]

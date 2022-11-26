@@ -116,4 +116,4 @@ def read_dict_from_csv(file_name):
         mydict = dict(reader)
         return mydict
 
-get_players_ratings_list()
+# get_players_ratings_list()

@@ -230,11 +230,12 @@ players_manual_boosts = [
 
 
 
-jornada_01 = [("Qatar", "Ecuador"), ("England, Iran"), ("Senegal", "Netherlands"), ("USA", "Wales"), ("Qatar", "Ecuador"), ("Qatar", "Ecuador"), ("Qatar", "Ecuador"), ("Qatar", "Ecuador"), ("Qatar", "Ecuador"), ("Qatar", "Ecuador"), ("Qatar", "Ecuador"), ("Qatar", "Ecuador"), ("Qatar", "Ecuador"), ("Qatar", "Ecuador"), ("Qatar", "Ecuador"), ("Qatar", "Ecuador"), ]
+jornada_01 = [("Qatar", "Ecuador"), ("England", "Iran"), ("Senegal", "Netherlands"), ("US", "Wales"), ("Argentina", "Saudi Arabia"), ("Denmark", "Tunisia"), ("Mexico", "Poland"), ("France", "Australia"), ("Morocco", "Croatia"), ("Germany", "Japan"), ("Spain", "Costa Rica"), ("Belgium", "Canada"), ("Switzerland", "Cameroon"), ("Uruguay", "South Korea"), ("Portugal", "Ghana"), ("Brazil", "Serbia"), ]
+jornada_02 = [("Qatar", "Senegal"), ("England", "US"), ("Ecuador", "Netherlands"), ("Iran", "Wales"), ("Poland", "Saudi Arabia"), ("Australia", "Tunisia"), ("Mexico", "Argentina"), ("France", "Denmark"), ("Canada", "Croatia"), ("Germany", "Spain"), ("Japan", "Costa Rica"), ("Belgium", "Morocco"), ("Serbia", "Cameroon"), ("Ghana", "South Korea"), ("Portugal", "Uruguay"), ("Brazil", "Switzerland"), ]
 
 
 def get_current_players(no_form=False, no_fixtures=False, forced_matches=[]):
-    all_teams, all_players = get_worldcup_data()
+    all_teams, all_players = get_worldcup_data(forced_matches=forced_matches)
     players_ratings_list = get_players_ratings_list()
 
     partial_players_plus_boosts = set_manual_boosts(all_players, players_manual_boosts)
@@ -255,19 +256,22 @@ def get_last_jornada_players():
 # best_full_teams(last_jornada_players, possible_formations, 300, super_verbose=True)
 
 
-current_players = get_current_players(forced_matches=jornada_01)
+# current_players = get_current_players(forced_matches=jornada_01, no_form=True)
+current_players = get_current_players(forced_matches=jornada_02)
 
 # worthy_players = sorted(current_players, key=lambda x: x.value/x.price, reverse=True)
 worthy_players = sorted(current_players, key=lambda x: x.value, reverse=True)
 
 purged_players = purge_everything(worthy_players)
 
-for player in worthy_players:
-    # print(player)
-    print(player.name + ",")
+for player in purged_players:
+    # if player.price <= 27:
+    print(player)
 print()
 #
-# best_full_teams(purged_players, possible_formations, 300, super_verbose=True)
+
+# mini_purge = worthy_players[0:600]
+best_full_teams(purged_players, possible_formations, 300, super_verbose=True)
 
 
 
