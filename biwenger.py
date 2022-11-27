@@ -4,7 +4,6 @@ import re
 import json
 import requests
 from pprint import pprint
-from bs4 import BeautifulSoup
 from unidecode import unidecode
 
 from player import Player, get_position

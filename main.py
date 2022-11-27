@@ -143,6 +143,9 @@ players_manual_boosts = [
     Player("Al-Dawsari", penalty_boost=0, strategy_boost=0.1),
 
     Player("Raúl Jiménez", penalty_boost=0.7, strategy_boost=0),
+    Player("Orbelín Pineda", penalty_boost=0.1, strategy_boost=0),
+    Player("Hirving Lozano", penalty_boost=0.2, strategy_boost=0),
+    Player("Alexis Vega", penalty_boost=0.2, strategy_boost=0),
     Player("Héctor Herrera", penalty_boost=0, strategy_boost=0.1),
     Player("Guardado", penalty_boost=0, strategy_boost=0.1),
 
@@ -229,9 +232,9 @@ players_manual_boosts = [
 ]
 
 
-
 jornada_01 = [("Qatar", "Ecuador"), ("England", "Iran"), ("Senegal", "Netherlands"), ("US", "Wales"), ("Argentina", "Saudi Arabia"), ("Denmark", "Tunisia"), ("Mexico", "Poland"), ("France", "Australia"), ("Morocco", "Croatia"), ("Germany", "Japan"), ("Spain", "Costa Rica"), ("Belgium", "Canada"), ("Switzerland", "Cameroon"), ("Uruguay", "South Korea"), ("Portugal", "Ghana"), ("Brazil", "Serbia"), ]
 jornada_02 = [("Qatar", "Senegal"), ("England", "US"), ("Ecuador", "Netherlands"), ("Iran", "Wales"), ("Poland", "Saudi Arabia"), ("Australia", "Tunisia"), ("Mexico", "Argentina"), ("France", "Denmark"), ("Canada", "Croatia"), ("Germany", "Spain"), ("Japan", "Costa Rica"), ("Belgium", "Morocco"), ("Serbia", "Cameroon"), ("Ghana", "South Korea"), ("Portugal", "Uruguay"), ("Brazil", "Switzerland"), ]
+jornada_03 = [("Qatar", "Netherlands"), ("England", "Wales"), ("Ecuador", "Senegal"), ("Iran", "US"), ("Mexico", "Saudi Arabia"), ("France", "Tunisia"), ("Poland", "Argentina"), ("Australia", "Denmark"), ("Canada", "Morocco"), ("Japan", "Spain"), ("Germany", "Costa Rica"), ("Belgium", "Croatia"), ("Brazil", "Cameroon"), ("Portugal", "South Korea"), ("Ghana", "Uruguay"), ("Serbia", "Switzerland"), ]
 
 
 def get_current_players(no_form=False, no_fixtures=False, forced_matches=[]):
@@ -257,7 +260,8 @@ def get_last_jornada_players():
 
 
 # current_players = get_current_players(forced_matches=jornada_01, no_form=True)
-current_players = get_current_players(forced_matches=jornada_02)
+# current_players = get_current_players(forced_matches=jornada_02)
+current_players = get_current_players(forced_matches=jornada_03)
 
 # worthy_players = sorted(current_players, key=lambda x: x.value/x.price, reverse=True)
 worthy_players = sorted(current_players, key=lambda x: x.value, reverse=True)
@@ -266,7 +270,10 @@ purged_players = purge_everything(worthy_players)
 
 for player in purged_players:
     # if player.price <= 27:
+    # if player.price <= 40 and (player.position == "MID" or player.position == "DEF"):
     print(player)
+    # if player.name == "Rodri" or player.name == "Goodwin" or player.name == "Alejandro Balde":
+    #     purged_players.remove(player)
 print()
 #
 
