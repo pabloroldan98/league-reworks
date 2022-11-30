@@ -15,10 +15,10 @@ from group_knapsack import best_full_teams, best_transfers
 from player import Player, set_players_value_to_last_fitness, set_manual_boosts, \
     set_players_elo_dif, set_players_sofascore_rating, set_players_value, \
     purge_everything, purge_worse_value_players, purge_no_country_players, \
-    purge_negative_values, fill_with_team_players
+    purge_negative_values, fill_with_team_players, get_old_players_data
 from OLD_group_knapsack import best_squads, best_teams
 from sofascore import get_players_ratings_list
-from team import Team
+from team import Team, get_old_teams_data
 
 playersDB_example = [
     Player("Mendy", "GK", 20, 6.8, "SEN"),
@@ -207,7 +207,7 @@ players_manual_boosts = [
 
     Player("Cristiano Ronaldo", penalty_boost=0.7, strategy_boost=0.1),
     Player("Bernardo Silva", penalty_boost=0, strategy_boost=0.1),
-    Player("Bruno Fernandes", penalty_boost=0, strategy_boost=0.1),
+    Player("Bruno Fernandes", penalty_boost=0.1, strategy_boost=0.1),
 
     Player("Thomas Partey", penalty_boost=0.2, strategy_boost=0.1),
     Player("Jordan Ayew", penalty_boost=0.2, strategy_boost=0.1),
@@ -262,52 +262,28 @@ my_team = [
 jornada_01 = [("Qatar", "Ecuador"), ("England", "Iran"), ("Senegal", "Netherlands"), ("US", "Wales"), ("Argentina", "Saudi Arabia"), ("Denmark", "Tunisia"), ("Mexico", "Poland"), ("France", "Australia"), ("Morocco", "Croatia"), ("Germany", "Japan"), ("Spain", "Costa Rica"), ("Belgium", "Canada"), ("Switzerland", "Cameroon"), ("Uruguay", "South Korea"), ("Portugal", "Ghana"), ("Brazil", "Serbia"), ]
 jornada_02 = [("Qatar", "Senegal"), ("England", "US"), ("Ecuador", "Netherlands"), ("Iran", "Wales"), ("Poland", "Saudi Arabia"), ("Australia", "Tunisia"), ("Mexico", "Argentina"), ("France", "Denmark"), ("Canada", "Croatia"), ("Germany", "Spain"), ("Japan", "Costa Rica"), ("Belgium", "Morocco"), ("Serbia", "Cameroon"), ("Ghana", "South Korea"), ("Portugal", "Uruguay"), ("Brazil", "Switzerland"), ]
 jornada_03 = [("Qatar", "Netherlands"), ("England", "Wales"), ("Ecuador", "Senegal"), ("Iran", "US"), ("Mexico", "Saudi Arabia"), ("France", "Tunisia"), ("Poland", "Argentina"), ("Australia", "Denmark"), ("Canada", "Morocco"), ("Japan", "Spain"), ("Germany", "Costa Rica"), ("Belgium", "Croatia"), ("Brazil", "Cameroon"), ("Portugal", "South Korea"), ("Ghana", "Uruguay"), ("Serbia", "Switzerland"), ]
+jornada_03_players = "players_before_jornada_03.csv"
 
 
-def get_current_players(no_form=False, no_fixtures=False, forced_matches=[]):
-    # all_teams, all_players = get_worldcup_data(forced_matches=forced_matches)
+def get_current_players(no_form=False, no_fixtures=False, no_boosts=False, forced_matches=[], use_old_players_data=False, use_old_teams_data=False):
+    all_teams, all_players = get_worldcup_data(forced_matches=forced_matches)
 
-    with open('players_before_jornada_03.csv', newline='') as f:
-        reader = csv.reader(f)
-        data = list(reader)
-    all_players = []
-    for d in data:
-        new_player = Player(
-            d[0],
-            d[1],
-            int(d[2]),
-            float(d[3]),
-            d[4],
-            d[5],
-            float(d[6]),
-            float(d[7]),
-            ast.literal_eval(d[8]),
-            float(d[9]),
-            float(d[10]),
-            float(d[11]),
-            float(d[12])
-        )
-        all_players.append(new_player)
-    with open('teams_before_jornada_03.csv', newline='') as f:
-        reader = csv.reader(f)
-        data = list(reader)
-    all_teams = []
-    for d in data:
-        new_team = Team(
-            d[0],
-            d[1],
-            float(d[2])
-        )
-        all_teams.append(new_team)
+    if use_old_teams_data:
+        all_teams = get_old_teams_data(forced_matches)
+
+    if use_old_players_data:
+        all_players = get_old_players_data()
 
     players_ratings_list = get_players_ratings_list()
 
-    partial_players_plus_boosts = set_manual_boosts(all_players, players_manual_boosts)
-    partial_players_plus_elo = set_players_elo_dif(partial_players_plus_boosts, all_teams)
-    partial_players_plus_sofascore_rating = set_players_sofascore_rating(partial_players_plus_elo, players_ratings_list)
-    full_players = set_players_value(partial_players_plus_sofascore_rating, no_form, no_fixtures)
+    partial_players_data = all_players
+    if not no_boosts:
+        partial_players_data = set_manual_boosts(all_players, players_manual_boosts)
+    partial_players_data = set_players_elo_dif(partial_players_data, all_teams)
+    partial_players_data = set_players_sofascore_rating(partial_players_data, players_ratings_list)
+    full_players_data = set_players_value(partial_players_data, no_form, no_fixtures)
 
-    return full_players
+    return full_players_data
 
 
 def get_last_jornada_players():
@@ -347,8 +323,10 @@ def get_last_jornada_players():
 # --------------------------------------------------------------------
 # BEST POSSIBLE CURRENT
 # --------------------------------------------------------------------
+# current_players = get_current_players()
 
-current_players = get_current_players(forced_matches=jornada_03)
+
+current_players = get_current_players(forced_matches=jornada_02, use_old_players_data=True, use_old_teams_data=True)
 
 # worthy_players = sorted(current_players, key=lambda x: x.value/x.price, reverse=True)
 worthy_players = sorted(current_players, key=lambda x: x.value, reverse=True)
@@ -370,7 +348,7 @@ print(len(purged_players))
 
 # best_transfers(my_team, mega_purged_players, 5, verbose=True)
 
-needed_purge = purged_players[:200]
+needed_purge = purged_players[:150]
 
 best_full_teams(needed_purge, possible_formations, 300, super_verbose=True)
 

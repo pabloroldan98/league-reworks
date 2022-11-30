@@ -43,39 +43,58 @@ def get_teams_worldcup_data(data, forced_matches=[]):
 
 def create_teams_list(worldcup_teams, teams_elos_dict, short_teams_elos_dict, forced_matches=[]):
     teams_list = []
-    for worldcup_team_id in worldcup_teams:
-        worldcup_team = worldcup_teams[str(worldcup_team_id)]
+    if not forced_matches:
+        for worldcup_team_id in worldcup_teams:
+            worldcup_team = worldcup_teams[str(worldcup_team_id)]
 
-        team_name = worldcup_team["name"]
-        team_name_next_opponent = None
-        if worldcup_team["nextGames"]:
-            team_next_opponent = get_next_opponent(int(worldcup_team_id),
-                                                   worldcup_teams)
-            team_name_next_opponent = team_next_opponent["name"]
-        if forced_matches:
-            for new_match in forced_matches:
-                home_team = new_match[0]
-                away_team = new_match[1]
-                if unidecode(team_name).lower() == unidecode(home_team).lower():
-                    team_name_next_opponent = away_team
-                if unidecode(team_name).lower() == unidecode(away_team).lower():
-                    team_name_next_opponent = home_team
+            team_name = worldcup_team["name"]
+            team_name_next_opponent = None
+            if worldcup_team["nextGames"]:
+                team_next_opponent = get_next_opponent(int(worldcup_team_id),
+                                                       worldcup_teams)
+                team_name_next_opponent = team_next_opponent["name"]
 
-        if team_name in teams_elos_dict:
-            team_elo = teams_elos_dict[team_name]
-        elif team_name in short_teams_elos_dict:
-            team_elo = short_teams_elos_dict[team_name]
-        else:
-            team_elo = 0
+            team_elo = get_team_elo(team_name, teams_elos_dict, short_teams_elos_dict)
 
-        new_team = Team(
-            team_name,
-            team_name_next_opponent,
-            team_elo
-        )
-        teams_list.append(new_team)
+            new_team = Team(
+                team_name,
+                team_name_next_opponent,
+                team_elo
+            )
+            teams_list.append(new_team)
+
+    else:
+        for new_match in forced_matches:
+            home_team = new_match[0]
+            away_team = new_match[1]
+
+            team_elo = get_team_elo(home_team, teams_elos_dict, short_teams_elos_dict)
+            new_team = Team(
+                home_team,
+                away_team,
+                team_elo
+            )
+            teams_list.append(new_team)
+
+            team_elo = get_team_elo(away_team, teams_elos_dict, short_teams_elos_dict)
+            new_team = Team(
+                away_team,
+                home_team,
+                team_elo
+            )
+            teams_list.append(new_team)
 
     return teams_list
+
+
+def get_team_elo(team_name, teams_elos_dict, short_teams_elos_dict):
+    if team_name in teams_elos_dict:
+        team_elo = teams_elos_dict[team_name]
+    elif team_name in short_teams_elos_dict:
+        team_elo = short_teams_elos_dict[team_name]
+    else:
+        team_elo = 0
+    return team_elo
 
 
 def get_next_opponent(team_id, teams):

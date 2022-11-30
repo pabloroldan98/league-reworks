@@ -1,4 +1,6 @@
+import ast
 import copy
+import csv
 import math
 
 import numpy as np
@@ -206,7 +208,7 @@ def set_players_elo_dif(players_list, teams_list):
         for team in teams_list:
             if team.name not in checked_teams:
                 print(team.name)
-        return checked_teams
+        print()
 
     teams_dict = {team.name: team for team in teams_list}
 
@@ -270,4 +272,28 @@ def set_players_value_to_last_fitness(players_list):
     repurged_list = purge_negative_values(purged_list)
     return repurged_list
 
+
+def get_old_players_data():
+    with open('players_before_jornada_03.csv', newline='') as f:
+        reader = csv.reader(f)
+        data = list(reader)
+    old_players_data = []
+    for d in data:
+        new_player = Player(
+            d[0],
+            d[1],
+            int(d[2]),
+            float(0),
+            d[4],
+            d[5],
+            float(d[6]),
+            float(d[7]),
+            ast.literal_eval(d[8]),
+            float(0),
+            float(0),
+            float(0),
+            float(d[12])
+        )
+        old_players_data.append(new_player)
+    return old_players_data
 
