@@ -47,9 +47,11 @@ def create_teams_list(worldcup_teams, teams_elos_dict, short_teams_elos_dict, fo
         worldcup_team = worldcup_teams[str(worldcup_team_id)]
 
         team_name = worldcup_team["name"]
-        team_next_opponent = get_next_opponent(int(worldcup_team_id),
-                                               worldcup_teams)
-        team_name_next_opponent = team_next_opponent["name"]
+        team_name_next_opponent = None
+        if worldcup_team["nextGames"]:
+            team_next_opponent = get_next_opponent(int(worldcup_team_id),
+                                                   worldcup_teams)
+            team_name_next_opponent = team_next_opponent["name"]
         if forced_matches:
             for new_match in forced_matches:
                 home_team = new_match[0]

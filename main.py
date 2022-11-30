@@ -1,5 +1,12 @@
+import ast
 import copy
+import gc
 from pprint import pprint
+# from pympler.tracker import SummaryTracker
+from statistics import mean
+import matplotlib.pyplot as plt
+import math
+import csv
 
 # Look at: https://stackoverflow.com/questions/74503207/knapsack-with-specific-amount-of-items-from-different-groups
 
@@ -7,9 +14,11 @@ from biwenger import get_worldcup_data
 from group_knapsack import best_full_teams, best_transfers
 from player import Player, set_players_value_to_last_fitness, set_manual_boosts, \
     set_players_elo_dif, set_players_sofascore_rating, set_players_value, \
-    purge_everything
+    purge_everything, purge_worse_value_players, purge_no_country_players, \
+    purge_negative_values, fill_with_team_players
 from OLD_group_knapsack import best_squads, best_teams
 from sofascore import get_players_ratings_list
+from team import Team
 
 playersDB_example = [
     Player("Mendy", "GK", 20, 6.8, "SEN"),
@@ -84,23 +93,6 @@ possible_formations = [
     [4, 5, 1],
     [5, 3, 2],
     [5, 4, 1],
-]
-
-my_team = [
-    Player("Matt Turner", "GK", 11, 7.4, "USA"),
-
-    Player("Blind", "DEF", 20, 7, "HOL"),
-    Player("Shaw", "DEF", 21, 7.2, "ING"),
-    Player("Otamendi", "DEF", 20, 7.3, "ARG"),
-
-    Player("Caicedo", "MID", 19, 7.1, "ECU"),
-    Player("De Bruyne", "MID", 38, 8, "BEL"),
-    Player("Bruno Fernandes", "MID", 37, 7.8, "POR"),
-    Player("Valverde", "MID", 29, 7.8, "URU"),
-
-    Player("Messi", "ATT", 51, 8.2, "ARG"),
-    Player("Griezmann", "ATT", 31, 7.7, "FRA"),
-    Player("Di María", "ATT", 22, 7.4, "ARG"),
 ]
 
 players_manual_boosts = [
@@ -231,6 +223,41 @@ players_manual_boosts = [
 
 ]
 
+my_first_team = [
+    Player("Matt Turner", "GK", 11, 7.4, "USA"),
+
+    Player("Blind", "DEF", 20, 7, "HOL"),
+    Player("Shaw", "DEF", 21, 7.2, "ING"),
+    Player("Otamendi", "DEF", 20, 7.3, "ARG"),
+
+    Player("Caicedo", "MID", 19, 7.1, "ECU"),
+    Player("De Bruyne", "MID", 38, 8, "BEL"),
+    Player("Bruno Fernandes", "MID", 37, 7.8, "POR"),
+    Player("Valverde", "MID", 29, 7.8, "URU"),
+
+    Player("Messi", "ATT", 51, 8.2, "ARG"),
+    Player("Griezmann", "ATT", 31, 7.7, "FRA"),
+    Player("Di María", "ATT", 22, 7.4, "ARG"),
+]
+
+
+my_team = [
+    Player("Matt Turner"),
+
+    Player("Blind"),
+    Player("Shaw"),
+    Player("Otamendi"),
+    Player("Alphonso Davies"),
+
+    Player("Kamada"),
+    Player("De Bruyne"),
+    Player("Zielinski"),
+
+    Player("Messi"),
+    Player("Griezmann"),
+    Player("Bale"),
+]
+
 
 jornada_01 = [("Qatar", "Ecuador"), ("England", "Iran"), ("Senegal", "Netherlands"), ("US", "Wales"), ("Argentina", "Saudi Arabia"), ("Denmark", "Tunisia"), ("Mexico", "Poland"), ("France", "Australia"), ("Morocco", "Croatia"), ("Germany", "Japan"), ("Spain", "Costa Rica"), ("Belgium", "Canada"), ("Switzerland", "Cameroon"), ("Uruguay", "South Korea"), ("Portugal", "Ghana"), ("Brazil", "Serbia"), ]
 jornada_02 = [("Qatar", "Senegal"), ("England", "US"), ("Ecuador", "Netherlands"), ("Iran", "Wales"), ("Poland", "Saudi Arabia"), ("Australia", "Tunisia"), ("Mexico", "Argentina"), ("France", "Denmark"), ("Canada", "Croatia"), ("Germany", "Spain"), ("Japan", "Costa Rica"), ("Belgium", "Morocco"), ("Serbia", "Cameroon"), ("Ghana", "South Korea"), ("Portugal", "Uruguay"), ("Brazil", "Switzerland"), ]
@@ -238,7 +265,41 @@ jornada_03 = [("Qatar", "Netherlands"), ("England", "Wales"), ("Ecuador", "Seneg
 
 
 def get_current_players(no_form=False, no_fixtures=False, forced_matches=[]):
-    all_teams, all_players = get_worldcup_data(forced_matches=forced_matches)
+    # all_teams, all_players = get_worldcup_data(forced_matches=forced_matches)
+
+    with open('players_before_jornada_03.csv', newline='') as f:
+        reader = csv.reader(f)
+        data = list(reader)
+    all_players = []
+    for d in data:
+        new_player = Player(
+            d[0],
+            d[1],
+            int(d[2]),
+            float(d[3]),
+            d[4],
+            d[5],
+            float(d[6]),
+            float(d[7]),
+            ast.literal_eval(d[8]),
+            float(d[9]),
+            float(d[10]),
+            float(d[11]),
+            float(d[12])
+        )
+        all_players.append(new_player)
+    with open('teams_before_jornada_03.csv', newline='') as f:
+        reader = csv.reader(f)
+        data = list(reader)
+    all_teams = []
+    for d in data:
+        new_team = Team(
+            d[0],
+            d[1],
+            float(d[2])
+        )
+        all_teams.append(new_team)
+
     players_ratings_list = get_players_ratings_list()
 
     partial_players_plus_boosts = set_manual_boosts(all_players, players_manual_boosts)
@@ -255,12 +316,38 @@ def get_last_jornada_players():
 
 # Begin:
 
+# --------------------------------------------------------------------
+# JORNADA 1:
+# --------------------------------------------------------------------
+
+
+# first_jornada_players = get_current_players(forced_matches=jornada_01, no_form=True)
+# # print(len(first_jornada_players))
+# first_jornada_players = purge_no_country_players(first_jornada_players)
+# first_jornada_players = purge_negative_values(first_jornada_players)
+# # first_jornada_players = sorted(first_jornada_players, key=lambda x: x.value, reverse=True)
+# # for player in first_jornada_players:
+# #     print(player)
+# # print()
+# first_jornada_players = purge_worse_value_players(first_jornada_players)
+# # print(len(first_jornada_players))
+
+# best_full_teams(first_jornada_players, possible_formations, 300)
+
+
+# --------------------------------------------------------------------
+# BEST POSSIBLE SQUAD OF THE LAST JORNADA
+# --------------------------------------------------------------------
+
+
 # last_jornada_players = get_last_jornada_players()
 # best_full_teams(last_jornada_players, possible_formations, 300, super_verbose=True)
 
 
-# current_players = get_current_players(forced_matches=jornada_01, no_form=True)
-# current_players = get_current_players(forced_matches=jornada_02)
+# --------------------------------------------------------------------
+# BEST POSSIBLE CURRENT
+# --------------------------------------------------------------------
+
 current_players = get_current_players(forced_matches=jornada_03)
 
 # worthy_players = sorted(current_players, key=lambda x: x.value/x.price, reverse=True)
@@ -269,24 +356,38 @@ worthy_players = sorted(current_players, key=lambda x: x.value, reverse=True)
 purged_players = purge_everything(worthy_players)
 
 for player in purged_players:
-    # if player.price <= 27:
-    # if player.price <= 40 and (player.position == "MID" or player.position == "DEF"):
     print(player)
-    # if player.name == "Rodri" or player.name == "Goodwin" or player.name == "Alejandro Balde":
-    #     purged_players.remove(player)
 print()
+
+print(len(purged_players))
+
+# mega_purged_players = purge_everything(purged_players, mega_purge=True)
+
+
+# --------------------------------------------------------------------
+# THE METHOD CALL:
+# --------------------------------------------------------------------
+
+# best_transfers(my_team, mega_purged_players, 5, verbose=True)
+
+needed_purge = purged_players[:200]
+
+best_full_teams(needed_purge, possible_formations, 300, super_verbose=True)
+
+
+# mega_purge = purged_players[:60]
 #
-
-# mini_purge = worthy_players[0:600]
-best_full_teams(purged_players, possible_formations, 300, super_verbose=True)
-
-
+# mega_purge = fill_with_team_players(my_team, mega_purge)
+#
+# best_transfers(my_team, mega_purge, 5, n_results=25, by_n_transfers=False)
 
 
 
-#####################################
+
+
+# --------------------------------------------------------------------
 # Testing:
-
+# --------------------------------------------------------------------
 
 # all_teams, all_players = get_worldcup_data()
 # for players in last_jornada_players:
@@ -295,6 +396,11 @@ best_full_teams(purged_players, possible_formations, 300, super_verbose=True)
 # best_transfers(my_team, playersDB_example, 4, n_results=50)
 
 # all_teams, all_players = get_worldcup_data()
+#
+# print(len(gc.get_objects()))
+# gc.collect()
+# print(len(gc.get_objects()))
+#
 #
 # count=dict()
 # for player in all_players:

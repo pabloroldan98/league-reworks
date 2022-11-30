@@ -39,7 +39,7 @@ def best_full_teams(players_list, formations=possible_formations, budget=300, ve
 
         formation_score_players.append((formation, score, result_players))
 
-        print_best_full_teams(formation_score_players)
+        # print_best_full_teams(formation_score_players)
 
     formation_score_players_by_score = sorted(formation_score_players, key=lambda tup: tup[1],
                                       reverse=True)
@@ -52,7 +52,8 @@ def best_full_teams(players_list, formations=possible_formations, budget=300, ve
 def print_best_full_teams(best_results_teams):
     for best_result in best_results_teams:
         formation, score, result_players = best_result
-        print("With formation " + str(formation) + ": " + str(score))
+        total_price = sum(player.price for player in result_players)
+        print("With formation " + str(formation) + ": " + str(score) + "  | (price = " + str(total_price) + ")")
         for best_player in result_players:
             print(best_player)
         print()
@@ -159,7 +160,8 @@ def best_transfers(past_team, players_list, n_transfers, formations=possible_for
             best_possible_transfers.append(grouped_best_possible_transfers[0:min(len(group_transfers), new_n_results - 1)])
         if verbose:
             for grouped_results in best_possible_transfers:
-                print_transfers(grouped_results)
+                for result in grouped_results:
+                    print_transfers(result)
     else:
         best_possible_transfers = all_possible_transfers_sorted[0:n_results - 1]
         if verbose:
@@ -171,7 +173,8 @@ def best_transfers(past_team, players_list, n_transfers, formations=possible_for
 def print_transfers(transfers):
     for best_result in transfers:
         formation, score, result_players, n_non_changed_players = best_result
-        print("With formation " + str(formation) + ": " + str(score))
+        total_price = sum(player.price for player in result_players)
+        print("With formation " + str(formation) + ": " + str(score) + "  | (price = " + str(total_price) + ")")
         print("Number of changes = " + str(
             len(result_players) - n_non_changed_players))
         for best_player in result_players:
@@ -188,7 +191,7 @@ def group_by_n(formation_score_players_stay_list, n, stay):
         for i in range(stay-n, stay+1):
             staying = pos_solution[3]
             if staying == i:
-                results[i].append(pos_solution)
+                results[stay - i].append(pos_solution)
                 break
     for grouped_result in results:
         grouped_result.sort(key=lambda tup: (tup[1], tup[3]), reverse=True)

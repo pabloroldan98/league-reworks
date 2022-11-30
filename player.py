@@ -1,4 +1,5 @@
 import copy
+import math
 
 import numpy as np
 from unidecode import unidecode
@@ -79,7 +80,7 @@ class Player:
             return False
 
     def calc_value(self, no_form=False, no_fixtures=False):
-        form_coef = (self.standard_price + self.price_trend) / self.standard_price
+        form_coef = ((self.price_trend/math.log(self.standard_price))/200000) + 1
         elo_coef = self.next_match_elo_dif * 0.0002 + 1  # * 0.1/500 + 1
         if no_form:
             form_coef = 1
@@ -106,14 +107,15 @@ def get_position(group):
     return position
 
 
-def purge_everything(players_list, nations_to_purge=[]):
-    purged_players = purge_injured_players(players_list)
-    repurged_players = purge_no_country_players(purged_players)
-    rerepurged_players = purge_non_starting_players(repurged_players)
-    rererepurged_players = purge_negative_values(rerepurged_players)
-    solution = purge_national_teams(rererepurged_players, nations_to_purge)
-
-    return solution
+def purge_everything(players_list, nations_to_purge=[], mega_purge=False):
+    purged_players = purge_no_country_players(players_list)
+    purged_players = purge_negative_values(purged_players)
+    purged_players = purge_injured_players(purged_players)
+    purged_players = purge_non_starting_players(purged_players)
+    purged_players = purge_national_teams(purged_players, nations_to_purge)
+    if mega_purge:
+        purged_players = purge_worse_value_players(purged_players)
+    return purged_players
 
 
 def purge_injured_players(players_list):
@@ -125,6 +127,15 @@ def purge_injured_players(players_list):
 def purge_no_country_players(players_list):
     result_players = [player for player in players_list if
                       player.country != "None"]
+    return result_players
+
+
+def purge_eliminated_players(players_list, qualified_teams):
+    result_players = []
+    for player in players_list:
+        for team in qualified_teams:
+            if player.country == team.name:
+                result_players.append(player)
     return result_players
 
 
@@ -146,6 +157,34 @@ def purge_national_teams(players_list, nations_to_purge):
     return result_players
 
 
+def purge_worse_value_players(players_list):
+    result_players = copy.deepcopy(players_list)
+    for player in result_players:
+        for player_to_check in result_players:
+            if player_to_check.price >= player.price \
+                    and player_to_check.value < player.value \
+                    and player_to_check.position == player.position:
+                result_players.remove(player_to_check)
+    return result_players
+
+
+def fill_with_team_players(my_team, players_list):
+    result_players = copy.deepcopy(players_list)
+    past_players = []
+    for p in my_team:
+        for c in players_list:
+            if p == c:
+                past_players.append(c)
+                break
+    for p in result_players:
+        for c in past_players:
+            if p == c:
+                past_players.remove(c)
+                break
+    result_players = result_players + past_players
+    return result_players
+
+
 def set_manual_boosts(players_list, manual_boosts):
     result_players = copy.deepcopy(players_list)
     for boosted_player in manual_boosts:
@@ -160,6 +199,7 @@ def set_manual_boosts(players_list, manual_boosts):
 def set_players_elo_dif(players_list, teams_list):
     result_players = copy.deepcopy(players_list)
     clean_players = purge_no_country_players(result_players)
+    # clean_players = purge_eliminated_players(clean_players, teams_list)
     checked_teams = check_teams(clean_players, teams_list)
     if len(checked_teams) != len(teams_list):
         print("The following teams do NOT match your Databases:")

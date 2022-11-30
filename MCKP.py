@@ -169,7 +169,7 @@ def knapsack_multichoice_onepick(weights, values, max_weight, verbose=False):
         if weights[0][i] < max_weight:
             if last_array[weights[0][i]] < values[0][i]:
                 last_array[weights[0][i]] = values[0][i]
-                last_path[weights[0][i]].append((0, i))
+                last_path[weights[0][i]] = [(0, i)]
             # last_array[weight[0][i]] = max(last_array[weight[0][i]], value[0][i])
 
     threshold = 0
