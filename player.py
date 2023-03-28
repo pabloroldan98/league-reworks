@@ -39,7 +39,10 @@ class Player:
         self.next_match_elo_dif = next_match_elo_dif
 
     def __str__(self):
-        return f"({self.name}, {self.position}, {self.price}, {self.value}, {self.country})"
+        form_coef = ((self.price_trend/math.log(self.standard_price))/200000) + 1
+        elo_coef = self.next_match_elo_dif * 0.0002 + 1
+        return f"({self.name}, {self.position}, {self.price}, {self.value}, {self.country}) - (form: {form_coef}, fixtures: {elo_coef})"
+        # return f"({self.name}, {self.position}, {self.price}, {self.value}, {self.country})"
 
     @property
     def position(self):
@@ -246,8 +249,15 @@ def set_players_sofascore_rating(players_list, players_ratings_list):
 
 def set_players_value(players_list, no_form=False, no_fixtures=False):
     result_players = copy.deepcopy(players_list)
+    players_coefs = []
     for player in result_players:
+        form_coef = ((player.price_trend / math.log(
+            player.standard_price)) / 200000) + 1
+        players_coefs.append((player.name, form_coef))
         player.set_value(no_form, no_fixtures)
+    sorted_coefs = sorted(players_coefs, key=lambda tup: tup[1], reverse=True)
+    # for p_c in sorted_coefs: print(p_c)
+    # print()
     return result_players
 
 

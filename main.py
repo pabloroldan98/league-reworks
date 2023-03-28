@@ -265,7 +265,7 @@ jornada_03 = [("Qatar", "Netherlands"), ("England", "Wales"), ("Ecuador", "Seneg
 jornada_03_players = "players_before_jornada_03.csv"
 
 
-def get_current_players(no_form=False, no_fixtures=False, no_boosts=False, forced_matches=[], use_old_players_data=False, use_old_teams_data=False):
+def get_current_players(no_form=False, no_fixtures=False, no_boosts=False, forced_matches=[], use_old_players_data=False, use_old_teams_data=False, from_file="sofascore_players_ratings"):
     all_teams, all_players = get_worldcup_data(forced_matches=forced_matches)
 
     if use_old_teams_data:
@@ -274,7 +274,7 @@ def get_current_players(no_form=False, no_fixtures=False, no_boosts=False, force
     if use_old_players_data:
         all_players = get_old_players_data()
 
-    players_ratings_list = get_players_ratings_list()
+    players_ratings_list = get_players_ratings_list(file_name=from_file)
 
     partial_players_data = all_players
     if not no_boosts:
@@ -326,7 +326,7 @@ def get_last_jornada_players():
 # current_players = get_current_players()
 
 
-current_players = get_current_players(forced_matches=jornada_02, use_old_players_data=True, use_old_teams_data=True)
+current_players = get_current_players(no_boosts=True, no_form=False, no_fixtures=False, use_old_players_data=False, use_old_teams_data=False, from_file="sofascore_semi_players_ratings")
 
 # worthy_players = sorted(current_players, key=lambda x: x.value/x.price, reverse=True)
 worthy_players = sorted(current_players, key=lambda x: x.value, reverse=True)
@@ -348,9 +348,9 @@ print(len(purged_players))
 
 # best_transfers(my_team, mega_purged_players, 5, verbose=True)
 
-needed_purge = purged_players[:150]
+# needed_purge = purged_players[:180]
 
-best_full_teams(needed_purge, possible_formations, 300, super_verbose=True)
+best_full_teams(purged_players, possible_formations, 300, super_verbose=False)
 
 
 # mega_purge = purged_players[:60]
