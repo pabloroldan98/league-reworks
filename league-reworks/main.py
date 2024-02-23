@@ -39,128 +39,96 @@ laliga_matches_df = pd.concat(dfs, ignore_index=True)
 laliga_matches_df = laliga_matches_df.sort_values(by="Season", ascending=False).reset_index(drop=True)
 # print(laliga_matches_df)
 
-# Initialize a defaultdict to keep track of scores
-team_scores = defaultdict(lambda: defaultdict(int))
 
-# Iterate through each row to calculate scores
+# Initialize a defaultdict to keep track of scores and goals
+team_stats = defaultdict(lambda: defaultdict(lambda: {'points': 0, 'goals_scored': 0, 'goals_against': 0}))
+
+# Iterate through each row to calculate scores and goals
 for index, row in laliga_matches_df.iterrows():
     season = row['Season']
     home_team, away_team = row['HomeTeam'], row['AwayTeam']
     home_team_goals, away_team_goals = row['FTHG'], row['FTAG']
     result = row['FTR']
 
+    # Update goals scored and against
+    team_stats[home_team][season]['goals_scored'] += home_team_goals
+    team_stats[home_team][season]['goals_against'] += away_team_goals
+    team_stats[away_team][season]['goals_scored'] += away_team_goals
+    team_stats[away_team][season]['goals_against'] += home_team_goals
+
+    # Update points based on match result
     if result == 'H':  # Home win
-        team_scores[home_team][season] += 3
+        team_stats[home_team][season]['points'] += 3
     elif result == 'A':  # Away win
-        team_scores[away_team][season] += 3
+        team_stats[away_team][season]['points'] += 3
     elif result == 'D':  # Draw
-        team_scores[home_team][season] += 1
-        team_scores[away_team][season] += 1
+        team_stats[home_team][season]['points'] += 1
+        team_stats[away_team][season]['points'] += 1
 
-# Convert defaultdict to DataFrame
-laliga_default_results_df = pd.DataFrame.from_dict(team_scores, orient='index').reset_index()
-laliga_default_results_df.rename(columns={'index': 'Team'}, inplace=True)
+# Convert the nested defaultdict to a DataFrame
+data = []
+for team, seasons in team_stats.items():
+    for season, stats in seasons.items():
+        stats['goal_difference'] = stats['goals_scored'] - stats['goals_against']
+        data.append({'Team': team, 'Season': season, **stats})
 
-# Rename columns to match the specified format
-laliga_default_results_df.columns = ['Team'] + [f"Season_{col}_points" for col in laliga_default_results_df.columns[1:]]
+laliga_stats_df = pd.DataFrame(data)
 
-# Sort the teams within each season by their points and assign positions
-for season in [col.split('_points')[0] for col in laliga_default_results_df.columns if '_points' in col]:
-    season_points_col = f"{season}_points"
-    season_position_col = f"{season}_position"
+# Now, you need to sort and rank teams within each season by their points to assign positions
+laliga_stats_df['position'] = laliga_stats_df.sort_values(
+    by=['Season', 'points', 'goal_difference', 'goals_scored', 'goals_against'],
+    ascending=[True, False, False, False, True]
+).groupby('Season').cumcount() + 1
 
-    # Sort the DataFrame by the current season's points in descending order
-    season_df_sorted = laliga_default_results_df.sort_values(by=season_points_col, ascending=False)#.reset_index(drop=True)
-
-    # Assign positions, considering NaN values which represent teams without points
-    # Teams with NaN points will not get a position (will remain NaN)
-    season_df_sorted[season_position_col] = season_df_sorted[season_points_col].rank(method='min', ascending=False,
-                                                                                     na_option='keep')
-
-    # Update the original DataFrame with the new positions
-    laliga_default_results_df[season_position_col] = season_df_sorted[season_position_col]
-
-
-# Melt the DataFrame
-melted_df = laliga_default_results_df.melt(id_vars=['Team'], var_name='Season_Metric', value_name='Value')
-
-# Extract season and metric type
-melted_df['Season'] = melted_df['Season_Metric'].apply(lambda x: x.split('_')[1])
-melted_df['Metric'] = melted_df['Season_Metric'].apply(lambda x: x.split('_')[-1])
-
-# Drop the original Season_Metric column as it's no longer needed
-melted_df.drop('Season_Metric', axis=1, inplace=True)
-
-# Pivot the table to have separate columns for points and positions
-final_df = melted_df.pivot_table(index=['Team', 'Season'], columns='Metric', values='Value').reset_index()
-
-# Rename columns to match your desired output
-final_df.columns.name = None  # Remove the categorization name to clean up the DataFrame
-
-laliga_default_results_df = final_df.sort_values(by=["Season", "points"], ascending=False).reset_index(drop=True)
+# Ensure the final DataFrame is sorted by Season and Position
+laliga_default_results_df = laliga_stats_df.sort_values(by=['Season', 'position']).reset_index(drop=True)
+laliga_default_results_df = laliga_default_results_df[["Team", "Season", "position", "points"]].copy()
 
 
 
-# Initialize a defaultdict to keep track of scores
-team_scores = defaultdict(lambda: defaultdict(int))
+# Initialize a defaultdict to keep track of scores and goals
+team_stats = defaultdict(lambda: defaultdict(lambda: {'points': 0, 'goals_scored': 0, 'goals_against': 0}))
 
-# Iterate through each row to calculate scores
+# Iterate through each row to calculate scores and goals
 for index, row in laliga_matches_df.iterrows():
     season = row['Season']
     home_team, away_team = row['HomeTeam'], row['AwayTeam']
     home_team_goals, away_team_goals = row['FTHG'], row['FTAG']
     result = row['FTR']
 
+    # Update goals scored and against
+    team_stats[home_team][season]['goals_scored'] += home_team_goals
+    team_stats[home_team][season]['goals_against'] += away_team_goals
+    team_stats[away_team][season]['goals_scored'] += away_team_goals
+    team_stats[away_team][season]['goals_against'] += home_team_goals
+
+    # Update points based on match result
     if result == 'H':  # Home win
-        team_scores[home_team][season] += 3
+        team_stats[home_team][season]['points'] += 3
     elif result == 'A':  # Away win
-        team_scores[away_team][season] += 3
-    elif result == 'D' and home_team_goals != 0 and away_team_goals != 0:  # Draw
-        team_scores[home_team][season] += 1 * 0 * home_team_goals
-        team_scores[away_team][season] += 1 * 0 * away_team_goals
+        team_stats[away_team][season]['points'] += 3
+    elif result == 'D':  # Draw
+        team_stats[home_team][season]['points'] += 1 * 0 * home_team_goals
+        team_stats[away_team][season]['points'] += 1 * 0 * away_team_goals
 
-# Convert defaultdict to DataFrame
-laliga_modified_results_df = pd.DataFrame.from_dict(team_scores, orient='index').reset_index()
-laliga_modified_results_df.rename(columns={'index': 'Team'}, inplace=True)
+# Convert the nested defaultdict to a DataFrame
+data = []
+for team, seasons in team_stats.items():
+    for season, stats in seasons.items():
+        stats['goal_difference'] = stats['goals_scored'] - stats['goals_against']
+        data.append({'Team': team, 'Season': season, **stats})
 
-# Rename columns to match the specified format
-laliga_modified_results_df.columns = ['Team'] + [f"Season_{col}_points" for col in laliga_modified_results_df.columns[1:]]
+laliga_stats_df = pd.DataFrame(data)
 
+# Now, you need to sort and rank teams within each season by their points to assign positions
+laliga_stats_df['position'] = laliga_stats_df.sort_values(
+    by=['Season', 'points', 'goal_difference', 'goals_scored', 'goals_against'],
+    ascending=[True, False, False, False, True]
+).groupby('Season').cumcount() + 1
 
-# Sort the teams within each season by their points and assign positions
-for season in [col.split('_points')[0] for col in laliga_modified_results_df.columns if '_points' in col]:
-    season_points_col = f"{season}_points"
-    season_position_col = f"{season}_position"
-
-    # Sort the DataFrame by the current season's points in descending order
-    season_df_sorted = laliga_modified_results_df.sort_values(by=season_points_col, ascending=False)
-
-    # Assign positions, considering NaN values which represent teams without points
-    # Teams with NaN points will not get a position (will remain NaN)
-    season_df_sorted[season_position_col] = season_df_sorted[season_points_col].rank(method='min', ascending=False,
-                                                                                     na_option='keep')
-
-    # Update the original DataFrame with the new positions
-    laliga_modified_results_df[season_position_col] = season_df_sorted[season_position_col]
-
-
-# Melt the DataFrame
-melted_df = laliga_modified_results_df.melt(id_vars=['Team'], var_name='Season_Metric', value_name='Value')
-
-# Extract season and metric type
-melted_df['Season'] = melted_df['Season_Metric'].apply(lambda x: x.split('_')[1])
-melted_df['Metric'] = melted_df['Season_Metric'].apply(lambda x: x.split('_')[-1])
-
-# Drop the original Season_Metric column as it's no longer needed
-melted_df.drop('Season_Metric', axis=1, inplace=True)
-
-# Pivot the table to have separate columns for points and positions
-final_df = melted_df.pivot_table(index=['Team', 'Season'], columns='Metric', values='Value').reset_index()
-
-# Rename columns to match your desired output
-final_df.columns.name = None  # Remove the categorization name to clean up the DataFrame
-
-laliga_modified_results_df = final_df.sort_values(by=["Season", "points"], ascending=False).reset_index(drop=True)
+# Ensure the final DataFrame is sorted by Season and Position
+laliga_modified_results_df = laliga_stats_df.sort_values(by=['Season', 'position']).reset_index(drop=True)
+laliga_modified_results_df = laliga_modified_results_df[["Team", "Season", "position", "points"]].copy()
 
 
 
