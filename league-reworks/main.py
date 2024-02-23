@@ -108,8 +108,8 @@ for index, row in laliga_matches_df.iterrows():
     elif result == 'A':  # Away win
         team_stats[away_team][season]['points'] += 3
     elif result == 'D':  # Draw
-        team_stats[home_team][season]['points'] += 1 * 0.5 * home_team_goals
-        team_stats[away_team][season]['points'] += 1 * 0.5 * away_team_goals
+        team_stats[home_team][season]['points'] += min(1 * 0.5 * home_team_goals, 1.5)
+        team_stats[away_team][season]['points'] += min(1 * 0.5 * away_team_goals, 1.5)
 
 # Convert the nested defaultdict to a DataFrame
 data = []
