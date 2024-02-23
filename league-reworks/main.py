@@ -81,7 +81,7 @@ laliga_stats_df['position'] = laliga_stats_df.sort_values(
 ).groupby('Season').cumcount() + 1
 
 # Ensure the final DataFrame is sorted by Season and Position
-laliga_default_results_df = laliga_stats_df.sort_values(by=['Season', 'position']).reset_index(drop=True)
+laliga_default_results_df = laliga_stats_df.sort_values(by=['Season', 'position'], ascending=[False, True]).reset_index(drop=True)
 laliga_default_results_df = laliga_default_results_df[["Team", "Season", "position", "points"]].copy()
 
 
@@ -108,8 +108,8 @@ for index, row in laliga_matches_df.iterrows():
     elif result == 'A':  # Away win
         team_stats[away_team][season]['points'] += 3
     elif result == 'D':  # Draw
-        team_stats[home_team][season]['points'] += 1 * 0 * home_team_goals
-        team_stats[away_team][season]['points'] += 1 * 0 * away_team_goals
+        team_stats[home_team][season]['points'] += 1 * 0.5 * home_team_goals
+        team_stats[away_team][season]['points'] += 1 * 0.5 * away_team_goals
 
 # Convert the nested defaultdict to a DataFrame
 data = []
@@ -127,7 +127,7 @@ laliga_stats_df['position'] = laliga_stats_df.sort_values(
 ).groupby('Season').cumcount() + 1
 
 # Ensure the final DataFrame is sorted by Season and Position
-laliga_modified_results_df = laliga_stats_df.sort_values(by=['Season', 'position']).reset_index(drop=True)
+laliga_modified_results_df = laliga_stats_df.sort_values(by=['Season', 'position'], ascending=[False, True]).reset_index(drop=True)
 laliga_modified_results_df = laliga_modified_results_df[["Team", "Season", "position", "points"]].copy()
 
 
